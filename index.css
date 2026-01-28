@@ -1,0 +1,41 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    font-family: "Work Sans", sans-serif;
+  }
+}
+
+.btn-primary {
+  @apply bg-picto-primary border-0 text-white hover:bg-[#AD47FF] hover:scale-[102%] transition-all duration-300;
+}
+
+.content {
+  @apply max-xxl:w-full xxl:max-w-[1320px] xxl:mx-auto;
+}
+
+.section-title {
+  @apply md:font-semibold text-3xl sm:text-4xl md:text-5xl font-medium;
+}
+
+.center {
+  @apply flex justify-center items-center;
+}
+
+.introduction-profile-background {
+  background: radial-gradient(
+      circle at 12% 100%,
+      #ffe2b0f5 1% 5px,
+      transparent 15%
+    ),
+    /* bottom left */
+      radial-gradient(circle at 95% -15%, #da4df166 5%, transparent 30%),
+    /* top right */
+      radial-gradient(circle at center right, #c4f5e9b2 2%, transparent 35%); /* center right */
+}
+.blog-background {
+  background: radial-gradient(circle at -10% 0%, #da4df166 1%, transparent 25%),
+    radial-gradient(circle at 110% 30%, #c4f5e9b2 5%, transparent 25%);
+}

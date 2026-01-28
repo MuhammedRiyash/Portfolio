@@ -1,0 +1,14 @@
+#testimonialSwiper .swiper-pagination {
+  position: relative;
+  margin-top: 40px;
+}
+
+#testimonialSwiper .swiper-pagination-bullet-active {
+  background: #9929fb !important;
+  width: 25px;
+  border-radius: 5px;
+}
+
+.testimonial-card-shadow {
+  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05);
+}
