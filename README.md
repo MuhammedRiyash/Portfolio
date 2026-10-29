@@ -1,55 +1,25 @@
-# Muhammed Riyash - Portfolio
+# Muhammed Riyash J — Portfolio
 
-A modern, responsive, and interactive portfolio website built with React, Vite, and Tailwind CSS.
+Cinematic portfolio of Muhammed Riyash J, Senior Full-Stack Developer in Bengaluru, India.
+Live at **https://md-riyash-portfolio.vercel.app/** · printable CV at [`/cv`](https://md-riyash-portfolio.vercel.app/cv/).
 
-## About the Project
-This portfolio showcases my skills, projects, and experience as a developer. It features a sleek UI with smooth animations and a focus on performance.
+Built with Astro (static), TypeScript, GSAP + ScrollTrigger, Lenis and a lazily loaded, procedural three.js hero.
+Reduced-motion, no-WebGL and no-JS visitors get a complete, static version of every section.
 
-### Key Features
-- **Responsive Design**: Optimized for all screen sizes (mobile, tablet, desktop).
-- **Interactive UI**: Engaging user experience with Framer Motion and DaisyUI.
-- **Modern Tech Stack**: Built with the latest versions of React and Vite.
-- **Project Showcase**: Detailed view of my recent work and accomplishments.
+## Run it
 
-## Tech Stack
-- **Frontend**: React 19, Vite
-- **Styling**: Tailwind CSS, DaisyUI
-- **Animations**: Framer Motion
-- **Icons**: FontAwesome
-- **Routing**: React Router 6
-
-## Setup & Run Instructions
-
-### Prerequisites
-- Node.js & npm (Latest LTS version recommended)
-
-### Installation
-1. Clone the repository or download the source code.
-2. Navigate to the project directory:
-   ```bash
-   cd MuhammedRiyash_Portfolio
-   ```
-3. Install dependencies:
-   ```bash
-   npm install
-   ```
-
-### Development
-Start the development server:
 ```bash
-npm run dev
+npm install
+npm run dev       # local dev server
+npm run build     # static build into dist/
+npm run check     # astro check
+npm run preview   # serve the build
 ```
 
-### Build
-Generate a production-ready build:
-```bash
-npm run build
-```
+Content lives in `src/data/site.ts`. See [AGENTS.md](AGENTS.md) for structure, content rules, design tokens and the pre-ship checklist.
 
-## Author
-**Muhammed Riyash**
-- Email: [thisismd.riyash@gmail.com](mailto:thisismd.riyash@gmail.com)
-- GitHub: [github.com/MuhammedRiyash](https://github.com/MuhammedRiyash)
+## Contact
+[thisismd.riyash@gmail.com](mailto:thisismd.riyash@gmail.com) · [LinkedIn](https://www.linkedin.com/in/muhammedriyash) · [GitHub](https://github.com/MuhammedRiyash)
 
 ## License
-Licensed under the [MIT License](LICENSE).
+[MIT](LICENSE)

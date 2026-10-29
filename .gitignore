@@ -1,24 +1,21 @@
-# Logs
-logs
+# build output
+dist/
+.astro/
+.vercel/
+
+# dependencies
+node_modules/
+
+# logs
 *.log
 npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
+# environment
+.env
+.env.*
 
-# Editor directories and files
+# editors / OS
 .vscode/*
 !.vscode/extensions.json
-!.vscode/settings.json
 .idea
 .DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?

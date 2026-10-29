@@ -1,0 +1,584 @@
+/* ───────────────────────── Tokens ─────────────────────────
+   Three dark themes on <html data-theme="noir|midnight|forest"> (pre-paint script in Base.astro,
+   localStorage `pf-theme`; Noir is the default). `--ink` / `--bg` is the ground, `--bone` the
+   foreground. Everything below the palette is derived with color-mix, so a theme only sets the
+   palette block. The WebGL world reads --bg/--surface/--bone/--muted/--signal on the `pf:theme` event. */
+:root,
+:root[data-theme='noir'] {
+  --bg: #0b0b0c;
+  --surface: #131315;
+  --surface-2: #1b1b1e;
+  --bone: #ece8e1;
+  --bone-2: #dcd7cf;
+  --muted: #8c877f;
+  --muted-on-bone: #5c5750;
+  --signal: #ff5b2e;
+  /* Text on a --signal fill. */
+  --signal-ink: #0b0b0c;
+  /* --signal for small text (AA on --bg/--surface); same hue, darker where needed. */
+  --signal-text: var(--signal);
+  /* Accent on inverted --bone fills (solid pills, footer flood, reel card): ≥ 3:1 there. */
+  --signal-on-bone: #d9481f;
+  --shadow: rgb(0 0 0 / 0.55);
+  --grain-opacity: 0.06;
+  color-scheme: dark;
+}
+
+:root[data-theme='midnight'] {
+  --bg: #0a0f1e;
+  --surface: #111934;
+  --surface-2: #18213f;
+  --bone: #e6eaf5;
+  --bone-2: #cdd3e4;
+  --muted: #8e98b5;
+  --muted-on-bone: #56607d;
+  --signal: #6ea8ff;
+  --signal-ink: #0a0f1e;
+  --signal-text: var(--signal);
+  --signal-on-bone: #2a5bb8;
+  --shadow: rgb(2 4 12 / 0.6);
+  --grain-opacity: 0.06;
+  color-scheme: dark;
+}
+
+:root[data-theme='forest'] {
+  --bg: #0d1a14;
+  --surface: #13241b;
+  --surface-2: #1a2e23;
+  --bone: #e6efe8;
+  --bone-2: #cfdcd2;
+  --muted: #93a79a;
+  --muted-on-bone: #55665b;
+  --signal: #c8f169;
+  --signal-ink: #0d1a14;
+  --signal-text: var(--signal);
+  --signal-on-bone: #477515;
+  --shadow: rgb(0 6 3 / 0.55);
+  --grain-opacity: 0.06;
+  color-scheme: dark;
+}
+
+:root {
+  /* Derived — never hard-code these per theme. */
+  --ink: var(--bg);
+  --ink-2: var(--surface);
+  --ink-3: var(--surface-2);
+  --line: color-mix(in srgb, var(--bone) 12%, transparent);
+  --line-strong: color-mix(in srgb, var(--bone) 22%, transparent);
+  --line-on-bone: color-mix(in srgb, var(--ink) 14%, transparent);
+  --glass: color-mix(in srgb, var(--ink) 62%, transparent);
+  --signal-soft: color-mix(in srgb, var(--signal) 16%, transparent);
+  /* Focus ring; inverted (--bone) surfaces set it to --ink, where --signal can drop below 3:1. */
+  --focus: var(--signal);
+  /* Phone/laptop hardware stays graphite in every theme, like the real devices. */
+  --device: #1b1b1e;
+
+  --display: var(--font-display), 'Inter Tight', system-ui, sans-serif;
+  --sans: var(--font-sans), 'Geist', system-ui, sans-serif;
+  --mono: var(--font-mono), 'Geist Mono', ui-monospace, monospace;
+
+  --g: clamp(20px, 4.4vw, 72px);
+  --r: 18px;
+  --r-sm: 10px;
+  --header-h: 76px;
+
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-io: cubic-bezier(0.7, 0, 0.2, 1);
+  --ease-out: cubic-bezier(0.215, 0.61, 0.355, 1);
+
+  --t-display: clamp(40px, 7vw, 120px);
+  --t-h2: clamp(36px, 5.2vw, 86px);
+  --t-h3: clamp(28px, 3vw, 48px);
+  --t-lead: clamp(18px, 1.4vw, 21px);
+  /* Display tracking: −0.022em keeps a visible gap between every glyph pair (r·o, f·i, F·r) at 60–120 px. */
+  --track: -0.022em;
+}
+
+@media (max-width: 767px) {
+  :root {
+    --header-h: 64px;
+    --r: 14px;
+  }
+}
+
+/* ───────────────────────── Reset / base ───────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  overflow-x: clip;
+  background: var(--ink);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html:not(.lenis) {
+    scroll-behavior: smooth;
+  }
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  overflow-x: clip;
+  background: var(--ink);
+  color: var(--bone);
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.55;
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+img,
+svg,
+canvas,
+video {
+  display: block;
+  max-width: 100%;
+}
+
+img {
+  height: auto;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+  background: none;
+  border: 0;
+  padding: 0;
+}
+
+h1,
+h2,
+h3,
+h4,
+p,
+ul,
+ol,
+dl,
+dd,
+figure {
+  margin: 0;
+}
+
+ul,
+ol {
+  padding: 0;
+  list-style: none;
+}
+
+::selection {
+  background: var(--signal);
+  color: var(--signal-ink);
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+.sr-only {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skip {
+  position: fixed;
+  left: 12px;
+  top: 12px;
+  z-index: 200;
+  padding: 15px 18px;
+  border-radius: 999px;
+  background: var(--bone);
+  color: var(--ink);
+  font: 500 14px/1 var(--sans);
+  transform: translateY(-160%);
+  transition: transform 0.4s var(--ease);
+}
+
+.skip:focus {
+  transform: none;
+}
+
+/* ───────────────────────── Type helpers ───────────────────────── */
+.mono {
+  font-family: var(--mono);
+  font-size: 12.5px;
+  line-height: 1.4;
+  font-weight: 450;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.label {
+  color: var(--muted);
+}
+
+.display {
+  font-family: var(--display);
+  font-weight: 560;
+  letter-spacing: var(--track);
+  line-height: 0.95;
+  font-kerning: normal;
+  font-optical-sizing: auto;
+}
+
+/* Emphasis is colour and weight only; never a faux or serif italic. */
+.display em,
+em.accent {
+  font-style: normal;
+}
+
+.accent {
+  color: var(--signal);
+}
+
+.wrap {
+  padding-inline: var(--g);
+}
+
+.hair {
+  border: 0;
+  height: 1px;
+  background: var(--line);
+  margin: 0;
+}
+
+/* ───────────────────────── Reveal system ─────────────────────────
+   Content is visible by default. The hidden start state only applies when
+   JS is running, motion is allowed and the boot did not fail. */
+.ln {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.1em;
+  margin-bottom: -0.1em;
+}
+
+.ln > span {
+  display: block;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html.js:not(.boot-fail) [data-reveal] .ln > span {
+    transform: translate3d(0, 108%, 0);
+    transition: transform 1.15s var(--ease);
+  }
+
+  html.js:not(.boot-fail) [data-reveal].in .ln > span {
+    transform: none;
+  }
+
+  html.js:not(.boot-fail) [data-reveal] .ln:nth-child(2) > span { transition-delay: 0.08s; }
+  html.js:not(.boot-fail) [data-reveal] .ln:nth-child(3) > span { transition-delay: 0.16s; }
+  html.js:not(.boot-fail) [data-reveal] .ln:nth-child(4) > span { transition-delay: 0.24s; }
+  html.js:not(.boot-fail) [data-reveal] .ln:nth-child(5) > span { transition-delay: 0.32s; }
+
+  html.js:not(.boot-fail) .fade {
+    opacity: 0;
+    transform: translate3d(0, 24px, 0);
+    transition:
+      opacity 0.9s var(--ease),
+      transform 1.1s var(--ease);
+    transition-delay: var(--d, 0s);
+  }
+
+  html.js:not(.boot-fail) .fade.in {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* Headings split into words by sections.ts are scrubbed by ScrollTrigger instead of the line reveal. */
+  html.js:not(.boot-fail) [data-reveal][data-split] .ln > span {
+    transform: none;
+    transition: none;
+  }
+}
+
+.sw {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+  padding: 0 0.05em 0.12em 0;
+  margin: 0 -0.05em -0.12em 0;
+}
+
+.sw > span {
+  display: inline-block;
+  transform-origin: 0 100%;
+}
+
+/* ───────────────────────── Buttons / links ───────────────────────── */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 46px;
+  padding: 0 20px;
+  border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  font: 500 15px/1 var(--sans);
+  transition:
+    background-color 0.35s var(--ease-out),
+    color 0.35s var(--ease-out),
+    border-color 0.35s var(--ease-out);
+}
+
+.pill:hover {
+  background: var(--bone);
+  color: var(--ink);
+  border-color: var(--bone);
+  --signal: var(--signal-on-bone);
+}
+
+.pill--solid {
+  background: var(--bone);
+  color: var(--ink);
+  border-color: var(--bone);
+  --signal: var(--signal-on-bone);
+}
+
+.pill--solid:hover {
+  background: transparent;
+  color: var(--bone);
+  border-color: var(--line-strong);
+  --signal: inherit;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--signal);
+  flex: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .dot--pulse {
+    animation: pulse 2.2s var(--ease-out) infinite;
+  }
+}
+
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--signal) 55%, transparent); }
+  70% { box-shadow: 0 0 0 9px transparent; }
+  100% { box-shadow: 0 0 0 0 transparent; }
+}
+
+.ulink {
+  background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat;
+  transition: background-size 0.5s var(--ease);
+  padding-bottom: 2px;
+}
+
+.ulink:hover,
+.ulink:focus-visible {
+  background-size: 100% 1px;
+}
+
+/* Section header pattern: [0n] label ──── */
+.sec-head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  color: var(--muted);
+}
+
+.sec-head::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--line);
+}
+
+/* ───────────────────────── Shared WebGL canvas ─────────────────────────
+   "A Day in the Stack" (src/scripts/gl-scene.ts): one fixed canvas, one renderer. Behind <main> for the
+   hero desk, the city cross-section and the night desk under the footer flood (those stages are
+   transparent); lifted above it (.gl-top, cleared transparent) while the work chapters show their devices.
+   Hidden whenever no 3D zone is on screen; reduced motion and no-WebGL show the themed stills instead. */
+main {
+  position: relative;
+  z-index: 1;
+}
+
+.gl {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+  visibility: hidden;
+  opacity: 0;
+}
+
+.gl.on {
+  visibility: visible;
+}
+
+html.gl-live .gl {
+  opacity: 1;
+  transition: opacity 1.2s var(--ease-out);
+}
+
+html.gl-top .gl {
+  z-index: 6;
+}
+
+html.nogl .gl {
+  display: none;
+}
+
+/* Labels anchored to 3D points (layer tags in the stack, the hovered agent in the hero). */
+.gl-tag {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  background: var(--glass);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  color: var(--bone);
+  font: 500 11px/1 var(--mono);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  opacity: 0;
+  translate: 0 -50%;
+  transition: opacity 0.25s var(--ease-out), border-color 0.3s var(--ease-out);
+  will-change: transform, opacity;
+}
+
+.gl-tag b {
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.gl-tag.on {
+  border-color: var(--signal);
+}
+
+.gl-tag.on b {
+  color: var(--signal-text);
+}
+
+[data-city-tags] .gl-tag {
+  translate: -100% -50%;
+}
+
+/* Leader line from a floor tag to the floor's key prop (gl-scene.ts sets width + rotation), dot at the prop end. */
+.gl-lead {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 1px;
+  background: color-mix(in srgb, var(--bone) 55%, transparent);
+  transform-origin: 0 50%;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s var(--ease-out), background-color 0.3s var(--ease-out);
+  will-change: transform, opacity, width;
+}
+
+.gl-lead::after {
+  content: '';
+  position: absolute;
+  right: -3.5px;
+  top: -3px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: inherit;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--bg) 45%, transparent);
+}
+
+.gl-lead.on {
+  background: var(--signal);
+}
+
+.gl-tag--agent {
+  translate: -50% -100%;
+}
+
+@media (max-width: 1023px) {
+  [data-city-tags] {
+    display: none;
+  }
+}
+
+/* ───────────────────────── Grain ───────────────────────── */
+.grain {
+  position: fixed;
+  inset: -50%;
+  z-index: 90;
+  pointer-events: none;
+  opacity: var(--grain-opacity);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation: grain 1s steps(4) infinite;
+}
+
+@keyframes grain {
+  0% { transform: translate(0, 0); }
+  25% { transform: translate(-3%, 2%); }
+  50% { transform: translate(2%, -3%); }
+  75% { transform: translate(-1%, 3%); }
+  100% { transform: translate(0, 0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .grain {
+    display: none;
+  }
+}
+
+/* Lenis */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-stopped {
+  overflow: clip;
+}
+
+/* Theme switch (src/scripts/theme.ts): a short cross-fade where View Transitions exist. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.35s;
+  animation-timing-function: var(--ease-out);
+}
