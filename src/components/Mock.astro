@@ -1,0 +1,1092 @@
+---
+/**
+ * Illustrative HTML mockups (not screenshots; sample values only) for the unreleased projects,
+ * used as range-rail posters. The work chapters show image pairs instead (ChapterScreen + the 3D devices).
+ */
+import type { MockKind } from '../data/site';
+
+interface Props {
+  kind: MockKind;
+  title: string;
+}
+
+const { kind, title } = Astro.props;
+
+const urls: Record<MockKind, string> = {
+  fiomis: 'fiomis — choose better',
+  inventra: 'inventra / dashboard',
+  ai: 'repurpose / new',
+};
+const theme: Record<MockKind, 'light' | 'dark'> = {
+  fiomis: 'light',
+  inventra: 'dark',
+  ai: 'dark',
+};
+const inr = (n: number) => '₹' + n.toLocaleString('en-IN', { minimumFractionDigits: n % 1 ? 2 : 0, maximumFractionDigits: 2 });
+
+/* Simple garment silhouettes (viewBox 0 0 100 100) used as drawn product art. */
+const art = {
+  tee: 'M31 20 43 13Q50 19 57 13L69 20 82 35 72 42 67 37 67 88H33V37L28 42 18 35Z',
+  hoodie: 'M33 24Q38 9 50 9T67 24L81 38 84 86H73L70 47 69 90H31L30 47 27 86H16L19 38Z',
+  dress: 'M41 10H59L57 30Q63 40 80 90H20Q37 40 43 30Z',
+  pants: 'M31 11H69L74 90H56L50 38 44 90H26Z',
+  shirt: 'M33 15 44 11 50 20 56 11 67 15 81 33 72 40 67 34 67 89H33V34L28 40 19 33Z',
+  jacket: 'M32 16 44 11 50 24 56 11 68 16 80 30 82 88H70L68 44 68 90H32L32 44 30 88H18L20 30Z',
+} as const;
+type Art = keyof typeof art;
+
+const fioProducts: { name: string; price: number; art: Art; c1: string; c2: string; ink: string; sizes: string[] }[] = [
+  { name: 'Cloud Fleece Hoodie', price: 2499, art: 'hoodie', c1: '#e9e1d3', c2: '#cdbb9d', ink: '#6f5a3e', sizes: ['S', 'M', 'L'] },
+  { name: 'Oversized Tee — Bone', price: 1199, art: 'tee', c1: '#efe9df', c2: '#d9cfbf', ink: '#a69882', sizes: ['M', 'L', 'XL'] },
+  { name: 'Tiered Maxi Dress — Rust', price: 3299, art: 'dress', c1: '#f0ddd0', c2: '#d9a98a', ink: '#a2512c', sizes: ['XS', 'S', 'M'] },
+];
+
+const ledger = [
+  { t: '+ Receive', ref: 'GRN-0312', q: '+40', bal: 52 },
+  { t: '− Order', ref: '#FM1049', q: '−2', bal: 50 },
+  { t: '− Order', ref: '#FM1050', q: '−1', bal: 49 },
+  { t: '+ Return', ref: 'RMA-0087', q: '+1', bal: 50 },
+];
+
+const pos = [
+  { po: 'PO-2291', vendor: 'Shree Ganesh Packaging', amt: 48200, st: 'Received' },
+  { po: 'PO-2292', vendor: 'Kaveri Textiles', amt: 126500, st: 'Partial' },
+  { po: 'PO-2294', vendor: 'Malabar Agro Foods', amt: 32750, st: 'Approved' },
+  { po: 'PO-2295', vendor: 'Deccan Hardware Co.', amt: 18900, st: 'Draft' },
+  { po: 'PO-2297', vendor: 'Nilgiri Tea Estates', amt: 64000, st: 'Billed' },
+];
+const stockTrend = [62, 58, 66, 61, 72, 69, 78, 74, 83, 80, 88, 91];
+const trendPts = stockTrend.map((v, i) => `${(i * 300) / 11},${100 - v}`).join(' ');
+const months = ['N', 'D', 'J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O'];
+
+const thread = [
+  'Most teams don’t have a content problem. They have a distribution problem. 🧵',
+  'You wrote one 1,800-word post. That’s 7 tweets, 1 carousel and 3 LinkedIn hooks waiting to happen.',
+  'Step 1: pull the 3 claims a reader would screenshot. Everything else is supporting detail.',
+  'Step 2: rewrite each claim for the feed it lives in — short on X, structured on LinkedIn.',
+];
+---
+
+<div class={`mock mock--${theme[kind]} mock-${kind}`} role="img" aria-label={`Illustrative interface for ${title} (HTML mockup, sample data)`}>
+  <div class="mock-bar" aria-hidden="true">
+    <span class="mock-dots"><i></i><i></i><i></i></span>
+    <span class="mock-url">{urls[kind]}</span>
+    <span class="mock-note">Illustrative · sample data</span>
+  </div>
+  <div class="mock-win" aria-hidden="true">
+    <div class="scr" data-scr>
+      {
+        kind === 'fiomis' && (
+          <div class="fiomis">
+            <div class="nav">
+              <b class="brand serif">Fiomis</b>
+              <span class="cats"><span>Hoodies</span><span>Tees</span><span>Dresses</span></span>
+              <span class="cart">Bag · 1</span>
+            </div>
+            <div class="f-hero">
+              <div class="f-fabric" />
+              <svg viewBox="0 0 100 100" class="f-g"><path d={art.dress} /></svg>
+              <div class="f-copy">
+                <span class="eyebrow">Autumn edit</span>
+                <h4 class="serif">Choose Better.</h4>
+                <span class="sub">Organic cotton. Small batches. Made in Tiruppur.</span>
+              </div>
+            </div>
+            <div class="grid3">
+              {fioProducts.map((p) => (
+                <div class="pcard">
+                  <div class="pimg" style={`--c1:${p.c1};--c2:${p.c2};color:${p.ink}`}>
+                    <svg viewBox="0 0 100 100"><path d={art[p.art]} /></svg>
+                  </div>
+                  <span class="pname">{p.name}</span>
+                  <span class="price">{inr(p.price)}</span>
+                  <div class="sizes sm">{p.sizes.map((s, i) => <i class={i === 1 ? 'on' : ''}>{s}</i>)}</div>
+                </div>
+              ))}
+            </div>
+            <div class="f-pay">
+              <div>
+                <b>Checkout</b>
+                <span class="trend"><em>Tiered Maxi Dress — Rust · S</em>₹3,299</span>
+                <span class="trend"><em>Shipping</em>Free</span>
+                <span class="line tot"><em>Total</em>₹3,299</span>
+                <span class="btn rzp">Pay with Razorpay · UPI / Cards</span>
+                <span class="hook">webhook payment.captured → order #FM1051 ✓</span>
+              </div>
+              <div class="ledger">
+                <b>Stock ledger · append-only</b>
+                <span class="lh"><em>Entry</em><em>Ref</em><em>Qty</em><em>Bal</em></span>
+                {ledger.map((l) => (
+                  <span><em>{l.t}</em><em>{l.ref}</em><em class={l.q.startsWith('+') ? 'pos' : 'neg'}>{l.q}</em><em>{l.bal}</em></span>
+                ))}
+              </div>
+            </div>
+          </div>
+        )
+      }
+
+      {
+        kind === 'inventra' && (
+          <div class="inv">
+            <div class="head">
+              <b>Inventra <span class="dim">· Bengaluru DC</span></b>
+              <div class="roles">
+                <i class="on">Admin</i>
+                <i>Manager</i>
+                <i>Clerk</i>
+                <i>Accountant</i>
+              </div>
+            </div>
+            <div class="kpis">
+              {[
+                ['Inventory turnover', '6.2×', '▲ 0.4 vs Q2'],
+                ['Days of inventory', '58 d', '▼ 6 d'],
+                ['Fill rate', '97.3%', '▲ 1.1 pt'],
+                ['EOQ · SKU-1182', '173', 'units / order'],
+              ].map(([k, v, d]) => (
+                <div class="kpi">
+                  <span>{k}</span>
+                  <b>{v}</b>
+                  <small class={d.startsWith('▲') || d.startsWith('▼') ? 'up' : ''}>{d}</small>
+                </div>
+              ))}
+            </div>
+            <div class="cards2 wide">
+              <div class="card chart">
+                <div class="ch-h"><b>Stock value · last 12 months</b><span class="dim">₹ lakh</span></div>
+                <svg viewBox="0 0 300 100" preserveAspectRatio="none" class="trend">
+                  {[25, 50, 75].map((y) => <line x1="0" x2="300" y1={y} y2={y} />)}
+                  {stockTrend.map((v, i) => <rect x={(i * 300) / 11 - 6} y={100 - v * 0.6} width="12" height={v * 0.6} />)}
+                  <polyline points={trendPts} />
+                </svg>
+                <div class="months">{months.map((m) => <span>{m}</span>)}</div>
+              </div>
+              <div class="card eoq">
+                <b>Reorder alerts</b>
+                <span class="alert"><em>Basmati Rice 25 kg</em>12 left</span>
+                <span class="alert"><em>Corrugated Box 18″</em>40 left</span>
+                <span class="alert ok"><em>Nilgiri Tea 1 kg</em>PO raised</span>
+                <code>EOQ = √(2DS / H)</code>
+              </div>
+            </div>
+            <div class="table">
+              <div class="tr th po"><span>PO</span><span>Vendor</span><span class="r">Amount</span><span>Status</span></div>
+              {pos.map((p) => (
+                <div class="tr po">
+                  <span class="mono">{p.po}</span>
+                  <span>{p.vendor}</span>
+                  <span class="r">{inr(p.amt)}</span>
+                  <span><i class={`st st-${p.st.toLowerCase()}`}>{p.st}</i></span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )
+      }
+
+      {
+        kind === 'ai' && (
+          <div class="ai">
+            <div class="ai-in">
+              <span class="field">blog.acme.in/distribution-beats-creation</span>
+              <span class="models"><i class="on">Claude</i><i>GPT</i></span>
+              <span class="btn">Repurpose ✦</span>
+            </div>
+            <div class="ai-out">
+              <article class="post">
+                <span class="eyebrow">Source · Blog post · 6 min read</span>
+                <b class="h2">Distribution beats creation: getting 10× reach from every post</b>
+                <span class="by">By Priya Menon · 14 Oct</span>
+                <div class="post-art"><i /><i /><i /></div>
+                <p>Most teams spend 90% of their content time writing and 10% sharing. Flip it. A single long-form post holds enough ideas for a week of social.</p>
+                <p><mark>Pull the three claims a reader would screenshot</mark> — those become your hooks. Everything else is supporting detail.</p>
+                <p>Then rewrite for the feed: punchy on X, structured and skimmable on LinkedIn.</p>
+              </article>
+              <div class="col">
+                <div class="col-h"><b>X thread</b><span class="dim">7 posts</span></div>
+                {thread.map((t, n) => (
+                  <div class="tweet">
+                    <span class="who"><i class="av">A</i><b>Acme</b><span class="dim">@acme_in · {n + 1}/7</span></span>
+                    <span>{t}</span>
+                  </div>
+                ))}
+                <div class="col-h"><b>LinkedIn carousel</b><span class="dim">1 / 6</span></div>
+                <div class="slides">
+                  <div class="slide s3" />
+                  <div class="slide s2" />
+                  <div class="slide s1">
+                    <span class="eyebrow">Acme · Content playbook</span>
+                    <span class="serif">One post.<br />Ten feeds.</span>
+                    <span class="sub">How we turn a single blog into a week of reach →</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )
+      }
+    </div>
+  </div>
+</div>
+
+<style>
+  /* The frame (window chrome) follows the site theme. The screen inside is an illustration of the
+     product's own UI, so it pins its own palette: the site tokens are re-declared on .mock-win with
+     fixed values and never follow the theme. */
+  .mock {
+    width: 100%;
+    border-radius: 14px;
+    overflow: hidden;
+    background: var(--surface);
+    border: 1px solid var(--line-strong);
+    box-shadow:
+      0 40px 120px var(--shadow),
+      0 0 0 1px color-mix(in srgb, var(--ink) 40%, transparent);
+    font-family: var(--sans);
+    font-size: 11px;
+    line-height: 1.3;
+  }
+
+  .mock-win {
+    --ink: #0b0b0c;
+    --bone: #ece8e1;
+    --muted: #8c877f;
+    --signal: #ff5b2e;
+    --line: rgb(236 232 225 / 0.12);
+    --line-strong: rgb(236 232 225 / 0.22);
+    --fg: var(--ink);
+    --bg: #f6f3ee;
+    --panel: #ffffff;
+    --soft: rgb(11 11 12 / 0.08);
+    --sk: rgb(11 11 12 / 0.14);
+  }
+
+  .mock--dark .mock-win {
+    --fg: var(--bone);
+    --bg: #121214;
+    --panel: #1b1b1f;
+    --soft: rgb(236 232 225 / 0.07);
+    --sk: rgb(236 232 225 / 0.16);
+  }
+
+  .mock-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    height: 34px;
+    padding: 0 12px;
+    color: var(--muted);
+    font: 450 10.5px/1 var(--mono);
+    letter-spacing: 0.03em;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .mock-dots {
+    display: flex;
+    gap: 6px;
+  }
+
+  .mock-dots i {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--bone) 18%, transparent);
+  }
+
+  .mock-url {
+    flex: 1;
+    padding: 6px 10px;
+    border-radius: 6px;
+    background: color-mix(in srgb, var(--bone) 6%, transparent);
+    color: var(--bone);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .mock-note {
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .mock-win {
+    position: relative;
+    aspect-ratio: 16 / 10.5;
+    overflow: hidden;
+    background: var(--bg);
+    color: var(--fg);
+  }
+
+  .scr {
+    padding: 14px;
+    display: grid;
+    gap: 12px;
+    will-change: transform;
+  }
+
+  .mock :global(b) {
+    font-weight: 600;
+  }
+
+  .scr em {
+    font-style: normal;
+  }
+
+  .scr ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .scr p {
+    margin: 0;
+  }
+
+  .dim {
+    color: var(--muted);
+  }
+
+  .mono {
+    font-family: var(--mono);
+    font-size: 0.92em;
+  }
+
+  .r {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .eyebrow {
+    font: 500 9.5px/1.2 var(--mono);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    opacity: 0.65;
+  }
+
+  .h2,
+  .serif {
+    font-family: var(--display);
+    font-weight: 600;
+    letter-spacing: -0.03em;
+  }
+
+  .h2 {
+    font-size: 16px;
+    line-height: 1.1;
+  }
+
+  .sub {
+    opacity: 0.72;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 26px;
+    padding: 0 12px;
+    border-radius: 999px;
+    background: var(--fg);
+    color: var(--bg);
+    font-weight: 600;
+    white-space: nowrap;
+    width: fit-content;
+  }
+
+  .btn.wide {
+    width: 100%;
+  }
+
+  .nav {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--soft);
+  }
+
+  .cats {
+    display: flex;
+    gap: 14px;
+    font-weight: 500;
+  }
+
+  .brand {
+    margin-right: auto;
+    font-size: 14px;
+  }
+
+  .brand.serif {
+    font-size: 20px;
+  }
+
+  .cart {
+    padding: 5px 10px;
+    border-radius: 999px;
+    border: 1px solid var(--sk);
+    white-space: nowrap;
+  }
+
+  /* product art */
+  .pimg {
+    position: relative;
+    display: grid;
+    place-items: center;
+    aspect-ratio: 4 / 5;
+    border-radius: 8px;
+    overflow: hidden;
+    background:
+      radial-gradient(70% 50% at 50% 100%, rgb(0 0 0 / 0.1), transparent 70%),
+      linear-gradient(160deg, var(--c1), var(--c2));
+  }
+
+  .pimg svg {
+    width: 72%;
+    height: auto;
+    fill: currentColor;
+    filter: drop-shadow(0 6px 8px rgb(0 0 0 / 0.18));
+  }
+
+  .pcard {
+    display: grid;
+    gap: 4px;
+    align-content: start;
+  }
+
+  .pname {
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .price {
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .price s {
+    margin-left: 5px;
+    font-weight: 400;
+    opacity: 0.5;
+  }
+
+  .price em {
+    font-size: 11px;
+    color: #1d7a46;
+  }
+
+  .col-h,
+  .ch-h {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 8px;
+  }
+
+  .grid3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+
+  .sizes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .sizes i,
+  .roles i,
+  .models i {
+    font-style: normal;
+    padding: 4px 9px;
+    border-radius: 999px;
+    border: 1px solid var(--sk);
+    white-space: nowrap;
+  }
+
+  .sizes.sm i {
+    padding: 2px 7px;
+    font-size: 0.88em;
+  }
+
+  .sizes i.x {
+    opacity: 0.4;
+    text-decoration: line-through;
+  }
+
+  .sizes i.on,
+  .roles i.on,
+  .models i.on {
+    background: var(--fg);
+    color: var(--bg);
+    border-color: var(--fg);
+  }
+
+  .hook {
+    font: 500 10px/1.3 var(--mono);
+    color: #1d7a46;
+  }
+
+  .co {
+    display: grid;
+    grid-template-columns: 1.3fr 1fr;
+    gap: 12px;
+  }
+
+  .line,
+  .alert {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .line em {
+    opacity: 0.65;
+  }
+
+  .line.tot {
+    padding-top: 6px;
+    border-top: 1px solid var(--soft);
+    font-weight: 600;
+  }
+
+  .head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    font-size: 14px;
+  }
+
+  .head > div:first-child {
+    display: grid;
+    gap: 3px;
+  }
+
+  .roles,
+  .models {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+  }
+
+  .table {
+    display: grid;
+    border: 1px solid var(--soft);
+    border-radius: 8px;
+    overflow: hidden;
+    background: var(--panel);
+  }
+
+  .tr {
+    display: grid;
+    grid-template-columns: 1.5fr 1.7fr 0.6fr 1fr 0.9fr 0.9fr;
+    gap: 8px;
+    align-items: center;
+    padding: 7px 10px;
+    border-top: 1px solid var(--soft);
+    white-space: nowrap;
+  }
+
+  .tr > * {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .tr.th {
+    border-top: 0;
+    color: var(--muted);
+    font: 500 9px/1 var(--mono);
+    text-transform: uppercase;
+    background: var(--soft);
+  }
+
+  .cards2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .card {
+    display: grid;
+    gap: 7px;
+    align-content: start;
+    padding: 12px;
+    border-radius: 10px;
+    background: var(--panel);
+    border: 1px solid var(--soft);
+    min-width: 0;
+  }
+
+  /* fiomis */
+  .fiomis {
+    display: grid;
+    gap: 12px;
+  }
+
+  .mock-fiomis .mock-win {
+    background: #efe9df;
+  }
+
+  .fiomis .pimg {
+    aspect-ratio: 1;
+  }
+
+  .f-hero {
+    position: relative;
+    height: 160px;
+    border-radius: 10px;
+    overflow: hidden;
+    display: flex;
+    align-items: flex-end;
+    padding: 14px;
+  }
+
+  .f-copy {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    gap: 5px;
+    color: #1d1a16;
+  }
+
+  .f-hero h4 {
+    margin: 0;
+    font-size: 40px;
+    line-height: 0.9;
+  }
+
+  .f-g {
+    position: absolute;
+    right: 6%;
+    bottom: -6%;
+    height: 115%;
+    fill: #a2512c;
+    filter: drop-shadow(0 10px 14px rgb(0 0 0 / 0.2));
+  }
+
+  .f-fabric {
+    position: absolute;
+    inset: 0;
+    background:
+      repeating-linear-gradient(115deg, rgb(255 255 255 / 0.12) 0 2px, transparent 2px 9px),
+      radial-gradient(70% 90% at 80% 20%, #e7d9c2, transparent 70%),
+      linear-gradient(140deg, #ece2d1, #c9b393);
+  }
+
+  .f-pay {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .f-pay > div {
+    display: grid;
+    gap: 7px;
+    align-content: start;
+    padding: 12px;
+    border-radius: 10px;
+    background: #fbf8f3;
+  }
+
+  .btn.rzp {
+    width: 100%;
+    background: #0c2451;
+    color: #fff;
+  }
+
+  .ledger span {
+    display: grid;
+    grid-template-columns: 1.2fr 1.2fr 0.6fr 0.5fr;
+    gap: 6px;
+    padding: 5px 0;
+    border-top: 1px solid var(--soft);
+    font: 500 10px/1 var(--mono);
+    white-space: nowrap;
+  }
+
+  .ledger .lh {
+    opacity: 0.55;
+    font-size: 9px;
+    text-transform: uppercase;
+  }
+
+  .pos {
+    color: #1d7a46;
+  }
+
+  .neg {
+    color: #a2512c;
+  }
+
+  /* inventra */
+  .inv {
+    display: grid;
+    gap: 12px;
+  }
+
+  .kpis {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+  }
+
+  .kpi {
+    display: grid;
+    gap: 6px;
+    padding: 10px;
+    border-radius: 10px;
+    background: var(--panel);
+    border: 1px solid var(--soft);
+    color: var(--muted);
+    min-width: 0;
+  }
+
+  .kpi span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .kpi b {
+    font: 600 22px/1 var(--display);
+    letter-spacing: -0.03em;
+    color: var(--fg);
+  }
+
+  .kpi small {
+    font: 500 9.5px/1 var(--mono);
+  }
+
+  .kpi small.up {
+    color: #4fbf7f;
+  }
+
+  .cards2.wide {
+    grid-template-columns: 1.7fr 1fr;
+  }
+
+  .trend {
+    width: 100%;
+    height: 96px;
+    overflow: visible;
+  }
+
+  .chart .trend line {
+    stroke: var(--soft);
+    stroke-width: 1;
+  }
+
+  .chart .trend rect {
+    fill: rgb(236 232 225 / 0.12);
+  }
+
+  .chart .trend polyline {
+    fill: none;
+    stroke: var(--signal);
+    stroke-width: 2;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .months {
+    display: flex;
+    justify-content: space-between;
+    font: 500 9px/1 var(--mono);
+    color: var(--muted);
+  }
+
+  .alert {
+    padding: 6px 8px;
+    border-radius: 6px;
+    background: rgb(255 91 46 / 0.12);
+    white-space: nowrap;
+  }
+
+  .alert em {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .alert.ok {
+    background: rgb(79 191 127 / 0.12);
+  }
+
+  .eoq code {
+    font: 500 10px/1 var(--mono);
+    color: var(--muted);
+  }
+
+  .tr.po {
+    grid-template-columns: 0.8fr 2fr 1fr 0.9fr;
+  }
+
+  .st {
+    font-style: normal;
+    padding: 2px 7px;
+    border-radius: 999px;
+    font-size: 0.9em;
+    background: var(--soft);
+  }
+
+  .st-received,
+  .st-billed {
+    color: #4fbf7f;
+    background: rgb(79 191 127 / 0.14);
+  }
+
+  .st-partial {
+    color: #e5a54b;
+    background: rgb(229 165 75 / 0.14);
+  }
+
+  .st-approved {
+    color: #7aa7ff;
+    background: rgb(122 167 255 / 0.14);
+  }
+
+  /* ai */
+  .ai {
+    display: grid;
+    gap: 12px;
+  }
+
+  .ai-in {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .field {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    height: 30px;
+    padding: 0 10px;
+    border-radius: 8px;
+    border: 1px solid var(--sk);
+    font-family: var(--mono);
+    font-size: 0.92em;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+
+  .ai-in .btn {
+    height: 30px;
+    background: var(--signal);
+    color: var(--ink);
+  }
+
+  .ai-out {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    align-items: start;
+  }
+
+  .post {
+    display: grid;
+    gap: 8px;
+    padding: 14px;
+    border-radius: 10px;
+    background: var(--bone);
+    color: var(--ink);
+    line-height: 1.45;
+  }
+
+  .by {
+    opacity: 0.6;
+  }
+
+  .post-art {
+    position: relative;
+    height: 70px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: linear-gradient(135deg, #1f2a44, #3b2a4a);
+  }
+
+  .post-art i {
+    position: absolute;
+    border-radius: 50%;
+    width: 46px;
+    height: 46px;
+    top: 12px;
+  }
+
+  .post-art i:nth-child(1) {
+    left: 14%;
+    background: var(--signal);
+  }
+
+  .post-art i:nth-child(2) {
+    left: 42%;
+    background: #7aa7ff;
+    opacity: 0.85;
+  }
+
+  .post-art i:nth-child(3) {
+    left: 70%;
+    background: #4fbf7f;
+    opacity: 0.85;
+  }
+
+  .post mark {
+    background: rgb(255 91 46 / 0.3);
+    color: inherit;
+  }
+
+  .col {
+    display: grid;
+    gap: 8px;
+    align-content: start;
+    min-width: 0;
+  }
+
+  .tweet {
+    display: grid;
+    gap: 5px;
+    padding: 9px 10px;
+    border-radius: 10px;
+    background: var(--panel);
+    border: 1px solid var(--soft);
+    line-height: 1.4;
+  }
+
+  .who {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    white-space: nowrap;
+  }
+
+  .av {
+    display: grid;
+    place-items: center;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--signal);
+    color: var(--ink);
+    font: 700 9px/1 var(--sans);
+    font-style: normal;
+  }
+
+  .slides {
+    position: relative;
+    height: 200px;
+  }
+
+  .slide {
+    position: absolute;
+    inset: 0 18px 18px 0;
+    border-radius: 10px;
+    background: var(--panel);
+    border: 1px solid var(--soft);
+  }
+
+  .slide.s2 {
+    transform: translate(9px, 9px);
+  }
+
+  .slide.s3 {
+    transform: translate(18px, 18px);
+  }
+
+  .slide.s1 {
+    display: grid;
+    align-content: space-between;
+    gap: 8px;
+    padding: 14px;
+    background: linear-gradient(160deg, #0a66c2, #08417c);
+    color: #fff;
+  }
+
+  .slide.s1 .serif {
+    font-size: 28px;
+    line-height: 0.95;
+  }
+
+  @media (max-width: 599px) {
+    .mock {
+      font-size: 9.5px;
+    }
+
+    .mock-note {
+      display: none;
+    }
+
+    .scr {
+      padding: 10px;
+      gap: 9px;
+    }
+
+    .promo {
+      margin: -10px -10px 0;
+    }
+
+    .hide-s,
+    .gstin,
+    .cats {
+      display: none;
+    }
+
+    .h1 {
+      font-size: 22px;
+    }
+
+    .hero-art {
+      height: 100px;
+    }
+
+    .grid4 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .co,
+    .f-pay {
+      grid-template-columns: 1fr;
+    }
+
+    .admin {
+      grid-template-columns: 1fr;
+    }
+
+    .side {
+      display: none;
+    }
+
+    .tr {
+      grid-template-columns: 1.6fr 0.6fr 1fr 0.9fr 0.9fr;
+      gap: 6px;
+    }
+
+    .kpis {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .kpi b {
+      font-size: 18px;
+    }
+
+    .cards2.wide {
+      grid-template-columns: 1fr;
+    }
+
+    .f-hero h4 {
+      font-size: 30px;
+    }
+
+    .ai-in .models {
+      display: none;
+    }
+
+    .slide.s1 .serif {
+      font-size: 22px;
+    }
+  }
+</style>

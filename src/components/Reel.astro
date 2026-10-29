@@ -1,0 +1,387 @@
+---
+import { Image } from 'astro:assets';
+import portrait from '../assets/portrait.jpg';
+
+const stackCols = [
+  ['Astro SSR', 'Preact', 'TypeScript', 'Next.js 16', 'React', 'Tailwind CSS', 'Vite'],
+  ['Laravel 13', 'Medusa v2', 'Node.js', 'Prisma', 'PostgreSQL', 'MySQL', 'Redis'],
+  ['WooCommerce', 'Shopify Liquid', 'Playwright', 'Vitest', 'PHPUnit', 'Cloudflare', 'GTM · GA4'],
+];
+
+---
+
+<section class="reel" id="reel" aria-label="Reel: the entire stack, built to ship" data-reel>
+  <div class="reel-stage">
+    <p class="reel-words base display" aria-hidden="true">
+      <span class="rw" data-rw="a">The entire stack.</span>
+      <span class="rw" data-rw="b">Built to <em>ship.</em></span>
+    </p>
+
+    <div class="reel-card" data-reel-card>
+      <div class="reel-inner" data-reel-inner>
+        <div class="reel-col reel-left">
+          <div class="reel-head mono">
+            <span>Reel — stack in rotation</span>
+            <span class="tc" data-timecode>00:00:00:00</span>
+          </div>
+          <div class="marquee" aria-hidden="true">
+            {
+              stackCols.map((col, i) => (
+                <ul class={`mq mq-${i}`}>
+                  {[...col, ...col].map((s) => (
+                    <li>{s}</li>
+                  ))}
+                </ul>
+              ))
+            }
+          </div>
+          <p class="sr-only">Stack: {stackCols.flat().join(', ')}.</p>
+        </div>
+
+        <figure class="reel-portrait" data-reel-portrait>
+          <Image
+            src={portrait}
+            alt="Portrait of Muhammed Riyash J in a navy blazer and white shirt"
+            widths={[360, 560, 820]}
+            sizes="(max-width: 767px) 70vw, 30vw"
+            loading="lazy"
+          />
+          <figcaption class="mono">Muhammed Riyash J — Bengaluru</figcaption>
+        </figure>
+
+        <div class="reel-col reel-right">
+          <p class="rc-k mono">Currently</p>
+          <p class="rc-lead">
+            Senior Full-Stack Developer in Bengaluru, shipping full-stack builds since September 2023.
+          </p>
+          <dl class="rc-facts mono">
+            <div><dt>Based</dt><dd>Bengaluru, India · IST</dd></div>
+            <div><dt>Languages</dt><dd>English · Tamil · Arabic</dd></div>
+            <div><dt>Status</dt><dd><span class="dot dot--pulse" aria-hidden="true"></span>Open to senior full-stack roles</dd></div>
+          </dl>
+        </div>
+      </div>
+    </div>
+
+    <p class="reel-words inv display" aria-hidden="true" data-reel-inv>
+      <span class="rw" data-rw="a">The entire stack.</span>
+      <span class="rw" data-rw="b">Built to <em>ship.</em></span>
+    </p>
+  </div>
+</section>
+
+<style>
+  /* Default (no JS / reduced motion / boot failure): a static, stacked section.
+     The pinned, scrubbed version is layered on under html.motion. */
+  .reel {
+    position: relative;
+    padding: clamp(40px, 6vw, 96px) var(--g) 0;
+  }
+
+  .reel-stage {
+    position: relative;
+  }
+
+  .reel-words {
+    --rw-size: clamp(34px, 4.6vw, 84px);
+    margin: 0;
+    pointer-events: none;
+    font-size: var(--rw-size);
+    line-height: 0.92;
+    letter-spacing: var(--track);
+  }
+
+  .reel-words.base {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0 0.4em;
+    margin-bottom: 24px;
+  }
+
+  .reel-words.inv {
+    display: none;
+    color: var(--ink);
+  }
+
+  .rw {
+    white-space: nowrap;
+    transform-origin: 0 0;
+  }
+
+  .rw em {
+    font-weight: 600;
+  }
+
+  .reel-words.base .rw em {
+    color: var(--signal);
+  }
+
+  /* Inside the (--bone) card the accent switches to the on-bone variant so "ship." stays coloured. */
+  .reel-words.inv .rw em {
+    color: var(--signal-on-bone);
+  }
+
+  .reel-card {
+    position: relative;
+    min-height: min(820px, 94vh);
+    border-radius: var(--r);
+    background: var(--bone);
+    color: var(--ink);
+    --signal: var(--signal-on-bone);
+    --focus: var(--ink);
+    overflow: hidden;
+  }
+
+  .reel-inner {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    grid-template-columns: minmax(0, 36fr) minmax(0, 28fr) minmax(0, 36fr);
+    gap: clamp(16px, 2vw, 32px);
+    padding: clamp(20px, 2.4vw, 40px);
+    transform-origin: 50% 50%;
+  }
+
+  /* Pinned, scrubbed version (sections.ts reel()): desktop only, 150vh of travel. */
+  @media (prefers-reduced-motion: no-preference) and (min-width: 1024px) {
+    :global(html.motion:not(.boot-fail)) .reel {
+      height: 250vh;
+      padding: 0;
+    }
+
+    :global(html.motion:not(.boot-fail)) .reel-stage {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      height: 100svh;
+      overflow: hidden;
+    }
+
+    :global(html.motion:not(.boot-fail)) .reel-words {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+    }
+
+    :global(html.motion:not(.boot-fail)) .reel-words.inv {
+      display: block;
+      z-index: 3;
+    }
+
+    :global(html.motion:not(.boot-fail)) .rw {
+      position: absolute;
+      left: 0;
+      top: 0;
+      will-change: transform;
+    }
+
+    :global(html.motion:not(.boot-fail)) .reel-card {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      min-height: 0;
+      border-radius: 0;
+      will-change: clip-path;
+      clip-path: inset(40% 40% 40% 40% round 18px);
+    }
+
+    :global(html.motion:not(.boot-fail)) .reel-inner {
+      inset: var(--header-h) calc(var(--g) * 0.5) 16px;
+    }
+  }
+
+  .reel-col {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .reel-left {
+    justify-content: flex-end;
+  }
+
+  .reel-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--line-on-bone);
+    color: var(--muted-on-bone);
+  }
+
+  .tc {
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .marquee {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+    height: min(38vh, 300px);
+    overflow: hidden;
+    mask-image: linear-gradient(transparent, #000 18%, #000 82%, transparent);
+    -webkit-mask-image: linear-gradient(transparent, #000 18%, #000 82%, transparent);
+    margin-top: 14px;
+  }
+
+  .mq {
+    display: grid;
+    gap: 10px;
+    align-content: start;
+    font: 500 clamp(14px, 1.15vw, 17px) / 1.2 var(--sans);
+  }
+
+  .mq li {
+    padding: 10px 12px;
+    border: 1px solid var(--line-on-bone);
+    border-radius: 8px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .mq-1 li:nth-child(3n + 1) {
+    background: var(--ink);
+    color: var(--bone);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .mq {
+      animation: mq 14s linear infinite;
+      animation-play-state: paused;
+    }
+
+    .mq-1 {
+      animation-direction: reverse;
+      animation-duration: 17s;
+    }
+
+    .mq-2 {
+      animation-duration: 12s;
+    }
+
+    .reel:global(.live) .mq {
+      animation-play-state: running;
+    }
+  }
+
+  @keyframes mq {
+    to {
+      transform: translateY(calc(-50% - 5px));
+    }
+  }
+
+  .reel-portrait {
+    position: relative;
+    min-height: 0;
+    border-radius: 12px;
+    overflow: hidden;
+    background: color-mix(in srgb, var(--muted) 45%, var(--bone));
+  }
+
+  .reel-portrait :global(img) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 50% 30%;
+  }
+
+  .reel-portrait figcaption {
+    position: absolute;
+    left: 10px;
+    bottom: 10px;
+    right: 10px;
+    padding: 8px 10px;
+    border-radius: 6px;
+    background: color-mix(in srgb, var(--bone) 86%, transparent);
+    color: var(--ink);
+    font-size: 11px;
+  }
+
+  .reel-right {
+    justify-content: flex-start;
+    gap: 18px;
+    padding-top: 2px;
+  }
+
+  .rc-k {
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--line-on-bone);
+    color: var(--muted-on-bone);
+  }
+
+  .rc-lead {
+    font: 560 clamp(22px, 2vw, 32px) / 1.08 var(--display);
+    letter-spacing: -0.035em;
+  }
+
+  .rc-facts {
+    display: grid;
+    border-top: 1px solid var(--line-on-bone);
+    font-size: 11.5px;
+  }
+
+  .rc-facts div {
+    display: grid;
+    grid-template-columns: 96px 1fr;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--line-on-bone);
+  }
+
+  .rc-facts dt {
+    color: var(--muted-on-bone);
+  }
+
+  .rc-facts dd {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* The riding words end in the card's top-left and bottom-right corners. Nothing interactive lives in the
+     card, and the right column keeps a word-sized zone free at its foot so text never sits under "Built to ship.". */
+  @media (prefers-reduced-motion: no-preference) and (min-width: 1024px) {
+    :global(html.motion:not(.boot-fail)) .reel-right {
+      padding-bottom: calc(clamp(34px, 4.6vw, 84px) * 1.1 + 48px);
+      overflow: hidden;
+    }
+  }
+
+  /* Phone: portrait on top, the short "Currently" card under it. */
+  @media (max-width: 767px) {
+    .reel-card {
+      min-height: 0;
+      aspect-ratio: auto;
+    }
+
+    .reel-inner {
+      position: relative;
+      grid-template-columns: 1fr;
+      padding: 16px;
+      gap: 12px;
+    }
+
+    .reel-left,
+    .rc-k,
+    .rc-facts {
+      display: none;
+    }
+
+    .reel-portrait {
+      aspect-ratio: 4 / 4.2;
+    }
+
+    .rc-lead {
+      font-size: 20px;
+    }
+
+    .reel-right {
+      gap: 12px;
+    }
+  }
+</style>

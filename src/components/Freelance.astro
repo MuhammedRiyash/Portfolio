@@ -1,0 +1,515 @@
+---
+import { Image, getImage } from 'astro:assets';
+import DayStill from './DayStill.astro';
+import Mock from './Mock.astro';
+import taskify from '../assets/taskify.png';
+import h360 from '../assets/360homehealthcare-1440.png';
+import komaki from '../assets/komaki-desktop.png';
+import sgr777 from '../assets/sgr777-desktop.png';
+import taabi from '../assets/taabi-desktop.png';
+import jrBuilders from '../assets/jr-builders.png';
+import eleenova from '../assets/eleenova-desktop.png';
+import botticelli from '../assets/botticelli-desktop.png';
+import transworld from '../assets/transworld-academy-desktop.png';
+import hmj from '../assets/hmj-developers-desktop.png';
+import srishti from '../assets/srishti-construction-desktop.png';
+import morca from '../assets/morca-pumps-desktop.png';
+import { range } from '../data/site';
+
+const shots = {
+  taskify: { src: taskify, alt: 'Taskify dashboard: overview cards for projects, active tasks, team members and productivity' },
+  h360: { src: h360, alt: 'Screenshot of the live 360 Home Healthcare website home page' },
+  komaki: { src: komaki, alt: 'Homepage of komaki.in: KOMAKI electric scooters hero banner with navigation for scooters, dealers and shop' },
+  sgr777: { src: sgr777, alt: 'Homepage of sgr777foods.com: SGR777 Foods WooCommerce store with a festive-season product banner' },
+  taabi: { src: taabi, alt: 'Homepage of taabi.ai: “Operational Intelligence for the Physical Economy” hero over an aerial rail-yard photo' },
+  'jr-builders': { src: jrBuilders, alt: 'Modern three-storey home with timber cladding and glass balcony — project image from the JR Builders website' },
+  eleenova: { src: eleenova, alt: 'Homepage of eleenova.com: Shopify store for cookware and kitchen appliances with a category carousel and a “Nothing sticks. Except good taste.” non-stick pan banner' },
+  botticelli: { src: botticelli, alt: 'Homepage of botticelliri.com: Botticelli “Style Without Apology” boutique with a “The right fit exists. We’ll find it.” hero over a photo of the shop floor with clothing racks' },
+  transworld: { src: transworld, alt: 'Homepage of transworldacademy.com: Transworld Academy navigation with programs and an Enroll Now button over a hero photo of three students' },
+  hmj: { src: hmj, alt: 'Homepage of hmjdevelopers.com: HMJ Developers banner for Selvam Crown, “Vellore’s first residential high-rise”, with amenity photos' },
+  srishti: { src: srishti, alt: 'Homepage of srishticonstruction.co.in: Srishti Construction & Marketing navigation over a hero photo of a white classical-style villa with the word “Classic”' },
+  morca: { src: morca, alt: 'Homepage of morcapumps.com: “Building Innovative Solar Water Pumps” hero with solar panels and pumps over an underwater backdrop' },
+};
+const mockTitles = { fiomis: 'Fiomis', inventra: 'Inventra', ai: 'AI content SaaS' };
+
+const pad = (n: number) => String(n).padStart(2, '0');
+
+/* 20:00 street (gl-street.ts): the live sites' homepages become the shop windows. */
+const windowShot = async (src: ImageMetadata) => (await getImage({ src, width: 768, format: 'webp' })).src;
+const streetTex = JSON.stringify({
+  komaki: await windowShot(komaki),
+  sgr777: await windowShot(sgr777),
+  taabi: await windowShot(taabi),
+  eleenova: await windowShot(eleenova),
+  botticelli: await windowShot(botticelli),
+  transworld: await windowShot(transworld),
+  hmj: await windowShot(hmj),
+  srishti: await windowShot(srishti),
+  morca: await windowShot(morca),
+});
+---
+
+<section class="fl wrap" id="freelance" aria-labelledby="fl-title" data-street-tex={streetTex}>
+  <p class="sec-head mono">[03.b] The range</p>
+  <div class="fl-rail" data-rail>
+  <div class="fl-pin" data-rail-pin>
+  <DayStill
+    name="street"
+    class="fl-still"
+    sizes="100vw"
+    alt="Illustrated street at dusk: shopfronts for KOMAKI, SGR777 Foods, TAABI AI, Eleenova, Transworld Academy, HMJ Developers, Botticelli, Srishti Construction and Morca Pumps, with street lamps and a toy car parked out front."
+  />
+  <div class="fl-shade" aria-hidden="true"></div>
+  <div class="fl-head">
+    <h2 id="fl-title" class="display fl-title" data-reveal>
+      <span class="ln"><span>The range — 2023 to now</span></span>
+    </h2>
+    <div class="toggle mono" role="group" aria-label="Layout" data-toggle>
+      <span class="knob" aria-hidden="true" data-knob></span>
+      <button type="button" aria-pressed="true" data-view="grid">Grid</button>
+      <button type="button" aria-pressed="false" data-view="list">Index</button>
+    </div>
+  </div>
+  <p class="fl-sub fade">
+    WordPress and WooCommerce plugins, Shopify Liquid, React front ends and Next.js — the sites that built the
+    foundation.
+  </p>
+
+  <ul class="idx" data-idx data-layout="grid">
+    {
+      range.map((f, i) => {
+        const Tag = f.href ? 'a' : 'div';
+        const linkProps = f.href ? { href: f.href, target: '_blank', rel: 'noopener', 'data-cursor': 'Visit' } : {};
+        return (
+          <li class="idx-item">
+            <Tag class="idx-link" {...linkProps}>
+              <div class="poster" style={`--hue:${f.hue}`} data-poster>
+                {'image' in f.poster ? (
+                  <Image
+                    src={shots[f.poster.image].src}
+                    alt={shots[f.poster.image].alt}
+                    widths={[480, 800, 1200]}
+                    sizes="(max-width: 767px) 92vw, (max-width: 1023px) 46vw, 31vw"
+                    loading="lazy"
+                  />
+                ) : (
+                  <div class="poster-mock">
+                    <Mock kind={f.poster.mock} title={mockTitles[f.poster.mock]} />
+                  </div>
+                )}
+              </div>
+              <span class="idx-n mono">{pad(i + 1)}</span>
+              <span class="idx-name">{f.name}</span>
+              <span class="idx-what">{f.what}</span>
+              <span class="idx-stack mono">{f.stack}</span>
+              <span class="idx-go mono">
+                {f.href && (
+                  <>
+                    Visit site <span aria-hidden="true">↗</span>
+                    <span class="sr-only">(opens in a new tab)</span>
+                  </>
+                )}
+              </span>
+            </Tag>
+          </li>
+        );
+      })
+    }
+  </ul>
+  <div class="fl-bar" aria-hidden="true"><i data-rail-bar></i></div>
+  </div>
+  </div>
+
+  <div class="peek" aria-hidden="true" data-peek></div>
+</section>
+
+<style>
+  .fl {
+    padding-top: clamp(96px, 12vw, 180px);
+    padding-bottom: clamp(80px, 10vw, 140px);
+  }
+
+  .fl-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+    margin-top: clamp(36px, 5vw, 72px);
+  }
+
+  .fl-title {
+    font-size: clamp(36px, 4.6vw, 74px);
+    /* r·a in "range" closes to < 0.3 px at --track around 68 px */
+    letter-spacing: -0.016em;
+  }
+
+  .fl-sub {
+    margin-top: 20px;
+    max-width: 40em;
+    color: var(--muted);
+  }
+
+  .fl-bar {
+    display: none;
+  }
+
+  /* 20:00 street still: a wide establishing banner where the rail (and its live 3D street) is off. */
+  .fl :global(.fl-still) {
+    display: block;
+    aspect-ratio: 16 / 6;
+    margin-top: clamp(28px, 4vw, 56px);
+    border-radius: var(--r);
+    overflow: hidden;
+    --still-pos: 50% 42%;
+  }
+
+  .fl-shade {
+    display: none;
+  }
+
+  /* Desktop with motion: the grid becomes a pinned rail that scrolls sideways (sections.ts sets the height). */
+  @media (prefers-reduced-motion: no-preference) and (min-width: 1024px) and (min-height: 700px) {
+    :global(html.motion:not(.boot-fail)) .fl[data-mode='rail'] .fl-pin {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      margin-inline: calc(var(--g) * -1);
+      padding: calc(var(--header-h) + 8px) var(--g) 28px;
+      overflow: hidden;
+      isolation: isolate;
+    }
+
+    /* Rail: the street sits behind the whole pin — the live canvas (html.gl-street), else the still. */
+    :global(html.motion:not(.boot-fail)) .fl[data-mode='rail'] :global(.fl-still) {
+      position: absolute;
+      inset: 0;
+      z-index: -2;
+      aspect-ratio: auto;
+      margin: 0;
+      border-radius: 0;
+      --still-pos: 50% 30%;
+    }
+
+    :global(html.gl-street.motion:not(.boot-fail)) .fl[data-mode='rail'] :global(.fl-still) {
+      display: none;
+    }
+
+    /* scrims: the title (left) and the card captions (bottom) stay AA over the shopfronts */
+    :global(html.motion:not(.boot-fail)) .fl[data-mode='rail'] .fl-shade {
+      display: block;
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      background:
+        linear-gradient(0deg, color-mix(in srgb, var(--ink) 94%, transparent) 0%, color-mix(in srgb, var(--ink) 86%, transparent) 34%, color-mix(in srgb, var(--ink) 30%, transparent) 50%, transparent 60%),
+        radial-gradient(ellipse 60% 48% at 18% 22%, color-mix(in srgb, var(--ink) 88%, transparent) 0%, color-mix(in srgb, var(--ink) 70%, transparent) 55%, transparent 100%),
+        linear-gradient(180deg, color-mix(in srgb, var(--ink) 55%, transparent) 0%, transparent 14%);
+    }
+
+    /* title on top, cards ride low, the shopfronts fill the band between */
+    :global(html.motion:not(.boot-fail)) .fl[data-mode='rail'] .fl-sub {
+      margin-bottom: auto;
+    }
+
+    :global(html.gl-street.motion:not(.boot-fail)) .fl[data-mode='rail'] .toggle {
+      background: color-mix(in srgb, var(--ink) 72%, transparent);
+      -webkit-backdrop-filter: blur(10px);
+      backdrop-filter: blur(10px);
+    }
+
+    :global(html.motion:not(.boot-fail)) .fl[data-mode='rail'] .fl-head {
+      margin-top: 0;
+    }
+
+    :global(html.motion:not(.boot-fail)) .fl[data-mode='rail'] .idx {
+      display: flex;
+      gap: 28px;
+      width: max-content;
+      margin-top: clamp(24px, 3vh, 40px);
+      will-change: transform;
+    }
+
+    :global(html.motion:not(.boot-fail)) .fl[data-mode='rail'] .idx-item {
+      flex: none;
+      width: clamp(280px, min(26vw, 37vh), 420px);
+    }
+
+    :global(html.motion:not(.boot-fail)) .fl[data-mode='rail'] .fl-bar {
+      display: block;
+      height: 1px;
+      margin-top: 28px;
+      background: var(--line);
+    }
+
+    .fl-bar i {
+      display: block;
+      height: 100%;
+      background: var(--signal);
+      transform: scaleX(0);
+      transform-origin: 0 50%;
+    }
+  }
+
+  .toggle {
+    position: relative;
+    display: flex;
+    padding: 4px;
+    border-radius: 999px;
+    border: 1px solid var(--line-strong);
+  }
+
+  :global(html:not(.js)) .toggle {
+    display: none;
+  }
+
+  .toggle button {
+    position: relative;
+    z-index: 1;
+    min-width: 84px;
+    height: 44px;
+    padding: 0 16px;
+    border-radius: 999px;
+    color: var(--muted);
+    transition: color 0.4s var(--ease-out);
+  }
+
+  .toggle button[aria-pressed='true'] {
+    color: var(--ink);
+  }
+
+  .knob {
+    position: absolute;
+    top: 4px;
+    left: 0;
+    height: 44px;
+    width: 84px;
+    border-radius: 999px;
+    background: var(--bone);
+    transform: translateX(4px);
+    transition:
+      transform 0.55s var(--ease),
+      width 0.55s var(--ease);
+  }
+
+  /* Grid layout */
+  .idx {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 48px 24px;
+    margin-top: clamp(40px, 5vw, 72px);
+  }
+
+  .idx-link {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 6px 12px;
+    align-items: baseline;
+  }
+
+  .poster {
+    grid-column: 1 / -1;
+    position: relative;
+    aspect-ratio: 4 / 3;
+    border-radius: var(--r);
+    overflow: hidden;
+    margin-bottom: 10px;
+    background:
+      radial-gradient(90% 70% at 85% 10%, color-mix(in oklab, hsl(var(--hue) 45% 45%) 50%, transparent), transparent 70%),
+      linear-gradient(160deg, color-mix(in oklab, hsl(var(--hue) 30% 45%) 16%, var(--surface)), color-mix(in oklab, hsl(var(--hue) 30% 45%) 8%, var(--ink)));
+    border: 1px solid var(--line);
+  }
+
+  .poster :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 0 0;
+    transform: scale(1.06);
+    transition: transform 1.2s var(--ease);
+  }
+
+  /* Illustrative mockup: laid out at 220% of the poster width, scaled to 0.4 → 88% wide, inset 6%. */
+  .poster-mock {
+    position: absolute;
+    top: 6%;
+    left: 6%;
+    width: 220%;
+    transform: scale(0.4);
+    transform-origin: 0 0;
+    pointer-events: none;
+    transition: transform 1.2s var(--ease);
+  }
+
+  .idx-link:hover .poster :global(img),
+  .idx-link:focus-visible .poster :global(img) {
+    transform: scale(1.01);
+  }
+
+  .idx-link:hover .poster-mock,
+  .idx-link:focus-visible .poster-mock {
+    transform: translateY(-2%) scale(0.4);
+  }
+
+  .idx-n {
+    color: var(--muted);
+  }
+
+  .idx-name {
+    font: 560 26px/1.05 var(--display);
+    letter-spacing: -0.035em;
+  }
+
+  .idx-what {
+    grid-column: 2;
+    color: var(--muted);
+    font-size: 15px;
+  }
+
+  .idx-stack {
+    grid-column: 2;
+    font-size: 11px;
+  }
+
+  .idx-go {
+    grid-column: 2;
+    font-size: 11px;
+    color: var(--muted);
+    padding-top: 6px;
+  }
+
+  a.idx-link .idx-go {
+    color: var(--bone);
+  }
+
+  /* Index (list) layout */
+  .idx[data-layout='list'] {
+    display: block;
+    border-top: 1px solid var(--line);
+  }
+
+  .idx[data-layout='list'] .idx-item {
+    border-bottom: 1px solid var(--line);
+  }
+
+  .idx[data-layout='list'] .idx-link {
+    position: relative;
+    grid-template-columns: 48px minmax(0, 1.1fr) minmax(0, 1.4fr) minmax(0, 1fr) 120px;
+    align-items: center;
+    gap: 16px;
+    min-height: 88px;
+    padding: 0 12px;
+    isolation: isolate;
+  }
+
+  .idx[data-layout='list'] .idx-link::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: var(--bone);
+    transform: scaleY(0);
+    transform-origin: 50% 100%;
+    transition: transform 0.55s var(--ease);
+  }
+
+  .idx[data-layout='list'] .idx-link:hover::before,
+  .idx[data-layout='list'] .idx-link:focus-visible::before {
+    transform: none;
+  }
+
+  .idx[data-layout='list'] .idx-link:hover,
+  .idx[data-layout='list'] .idx-link:focus-visible {
+    color: var(--ink);
+  }
+
+  .idx[data-layout='list'] .idx-link:hover :is(.idx-what, .idx-n, .idx-go),
+  .idx[data-layout='list'] .idx-link:focus-visible :is(.idx-what, .idx-n, .idx-go) {
+    color: var(--muted-on-bone);
+  }
+
+  .idx[data-layout='list'] .poster {
+    display: none;
+  }
+
+  .idx[data-layout='list'] .idx-name {
+    font-size: clamp(28px, 3vw, 44px);
+    transition: transform 0.55s var(--ease);
+  }
+
+  .idx[data-layout='list'] .idx-link:hover .idx-name {
+    transform: translateX(14px);
+  }
+
+  .idx[data-layout='list'] :is(.idx-what, .idx-stack, .idx-go) {
+    grid-column: auto;
+    padding: 0;
+  }
+
+  .idx[data-layout='list'] .idx-go {
+    justify-self: end;
+  }
+
+  .peek {
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 30;
+    width: 320px;
+    aspect-ratio: 4 / 3;
+    border-radius: 14px;
+    overflow: hidden;
+    pointer-events: none;
+    opacity: 0;
+    transform: scale(0.6);
+    transition:
+      opacity 0.35s var(--ease-out),
+      transform 0.45s var(--ease);
+    box-shadow: 0 30px 80px var(--shadow);
+  }
+
+  .peek:global(.on) {
+    opacity: 1;
+    transform: none;
+  }
+
+  .peek :global(.poster) {
+    margin: 0;
+    height: 100%;
+    border-radius: 0;
+  }
+
+  @media (max-width: 1023px) {
+    .idx {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .idx[data-layout='list'] .idx-link {
+      grid-template-columns: 40px minmax(0, 1fr) minmax(0, 1.2fr);
+      padding: 16px 8px;
+    }
+
+    .idx[data-layout='list'] :is(.idx-stack, .idx-go) {
+      display: none;
+    }
+  }
+
+  @media (max-width: 767px) {
+    .idx {
+      grid-template-columns: 1fr;
+    }
+
+    .idx[data-layout='list'] .idx-link {
+      grid-template-columns: 32px 1fr;
+      gap: 4px 12px;
+    }
+
+    .idx[data-layout='list'] .idx-what {
+      grid-column: 2;
+    }
+  }
+</style>

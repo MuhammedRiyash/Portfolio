@@ -1,0 +1,129 @@
+---
+/**
+ * Colour-theme radiogroup (Noir / Midnight / Forest). `compact` shows swatches only (labels stay for
+ * screen readers and as tooltips); otherwise each swatch carries a visible label.
+ * The checked look comes from <html data-theme> (set before paint), so it is right before JS runs;
+ * src/scripts/theme.ts keeps aria-checked and the roving tabindex in sync.
+ */
+import { THEMES, DEFAULT_THEME } from '../data/themes';
+
+interface Props {
+  compact?: boolean;
+  class?: string;
+}
+
+const { compact = false, class: cls } = Astro.props;
+---
+
+<div class:list={['ts', compact && 'ts--compact', cls]} role="radiogroup" aria-label="Colour theme" data-theme-switch>
+  {
+    THEMES.map((t) => (
+      <button
+        type="button"
+        role="radio"
+        class="ts-opt"
+        data-theme-opt={t.name}
+        aria-checked={t.name === DEFAULT_THEME ? 'true' : 'false'}
+        tabindex={t.name === DEFAULT_THEME ? 0 : -1}
+        title={compact ? t.label : undefined}
+        style={`--sw-ground:${t.ground};--sw-accent:${t.accent}`}
+      >
+        <span class="ts-sw" aria-hidden="true" />
+        <span class={compact ? 'sr-only' : 'ts-label mono'}>{t.label}</span>
+      </button>
+    ))
+  }
+</div>
+
+<script>
+  import { initTheme } from '../scripts/theme';
+  initTheme();
+</script>
+
+<style>
+  .ts {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  /* Needs JS to switch; without it the theme stays on the OS default. */
+  :global(html:not(.theme-js)) .ts {
+    display: none;
+  }
+
+  .ts--compact {
+    gap: 0;
+    border-radius: 999px;
+    background: var(--glass);
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+    border: 1px solid var(--line);
+  }
+
+  .ts-opt {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-width: 44px;
+    min-height: 44px;
+    padding: 0 14px 0 10px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    color: var(--muted);
+    transition:
+      border-color 0.3s var(--ease-out),
+      color 0.3s var(--ease-out);
+  }
+
+  .ts--compact .ts-opt {
+    width: 44px;
+    padding: 0;
+    border: 0;
+  }
+
+  .ts-opt:hover {
+    color: var(--bone);
+    border-color: var(--line-strong);
+  }
+
+  .ts-opt:focus-visible {
+    outline-offset: 0;
+    border-radius: 999px;
+  }
+
+  /* Swatch: the theme's ground with its accent as a dot. */
+  .ts-sw {
+    position: relative;
+    width: 20px;
+    height: 20px;
+    flex: none;
+    border-radius: 50%;
+    background: radial-gradient(circle at 50% 50%, var(--sw-accent) 0 3.5px, var(--sw-ground) 4px);
+    box-shadow: 0 0 0 1px var(--muted);
+    transition: box-shadow 0.3s var(--ease-out);
+  }
+
+  .ts-label {
+    font-size: 11.5px;
+  }
+
+  /* Checked state follows <html data-theme> so it is correct before the script syncs aria-checked. */
+  :global(html:not([data-theme])) .ts-opt[data-theme-opt='noir'],
+  :global(html[data-theme='noir']) .ts-opt[data-theme-opt='noir'],
+  :global(html[data-theme='midnight']) .ts-opt[data-theme-opt='midnight'],
+  :global(html[data-theme='forest']) .ts-opt[data-theme-opt='forest'] {
+    color: var(--bone);
+    border-color: var(--bone);
+  }
+
+  :global(html:not([data-theme])) .ts-opt[data-theme-opt='noir'] .ts-sw,
+  :global(html[data-theme='noir']) .ts-opt[data-theme-opt='noir'] .ts-sw,
+  :global(html[data-theme='midnight']) .ts-opt[data-theme-opt='midnight'] .ts-sw,
+  :global(html[data-theme='forest']) .ts-opt[data-theme-opt='forest'] .ts-sw {
+    box-shadow:
+      0 0 0 2px var(--ink),
+      0 0 0 3.5px var(--bone);
+  }
+</style>

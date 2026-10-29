@@ -1,0 +1,104 @@
+---
+/**
+ * A work chapter's desktop screen in a browser frame: one 16:10 image (a real capture of a live public
+ * site, or an illustrative render for unreleased work). The same image is the 3D laptop's screen
+ * texture (gl-devices.ts); this frame is what shows without the 3D devices and stays the accessible source.
+ */
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+interface Props {
+  src: ImageMetadata;
+  alt: string;
+  /** shown in the address bar */
+  host: string;
+  /** "Live site", "Illustrative · sample data", … */
+  note: string;
+  live?: boolean;
+}
+
+const { src, alt, host, note, live = false } = Astro.props;
+---
+
+<figure class="ch-screen" data-ch-screen>
+  <div class="bar" aria-hidden="true">
+    <span class="dots"><i></i><i></i><i></i></span>
+    <span class="url">{host}</span>
+    <span class:list={['note', { live }]}>{live && '● '}{note}</span>
+  </div>
+  <Image class="shot" src={src} alt={alt} widths={[640, 960, 1440]} sizes="(max-width: 1023px) 92vw, 52vw" loading="lazy" />
+</figure>
+
+<style>
+  .ch-screen {
+    width: 100%;
+    margin: 0;
+    border-radius: 14px;
+    overflow: hidden;
+    background: var(--surface);
+    border: 1px solid var(--line-strong);
+    box-shadow: 0 40px 120px var(--shadow);
+    transform-origin: 50% 100%;
+    will-change: transform;
+  }
+
+  .bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    height: 34px;
+    padding: 0 12px;
+    color: var(--muted);
+    font: 450 10.5px/1 var(--mono);
+    letter-spacing: 0.03em;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .dots {
+    display: flex;
+    gap: 6px;
+  }
+
+  .dots i {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--bone) 18%, transparent);
+  }
+
+  .url {
+    flex: 1;
+    min-width: 0;
+    padding: 6px 10px;
+    border-radius: 6px;
+    background: color-mix(in srgb, var(--bone) 6%, transparent);
+    color: var(--bone);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .note {
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .note.live {
+    color: var(--bone);
+  }
+
+  .shot {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+    object-position: 50% 0;
+  }
+
+  @media (max-width: 479px) {
+    .note {
+      display: none;
+    }
+  }
+</style>

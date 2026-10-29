@@ -1,0 +1,366 @@
+---
+/**
+ * "One developer, the whole product." — the five layers of a product, each with the real projects
+ * where Muhammed built it. The live picture is the WebGL city cross-section (src/scripts/gl-world.ts, layers in
+ * the same order as this list, tags positioned into [data-city-tags]); the themed still is the no-WebGL /
+ * reduced-motion visual.
+ */
+import { layers } from '../data/site';
+import DayStill from './DayStill.astro';
+
+const pad = (n: number) => String(n).padStart(2, '0');
+---
+
+<section class="stk" id="product" aria-labelledby="stk-title" data-stack>
+  <div class="stk-stage">
+    <div class="stk-copy">
+      <p class="sec-head mono">[01] The whole product</p>
+      <h2 id="stk-title" class="display stk-title" data-reveal>
+        <span class="ln"><span>One developer,</span></span>
+        <span class="ln"><span>the whole <em>product.</em></span></span>
+      </h2>
+      <p class="stk-sub fade">
+        From the screen a customer taps to the server that ships it, I build every layer — and test it end to end
+        against the live store.
+      </p>
+
+      <ol class="stk-list" data-stack-list>
+        {
+          layers.map((l, i) => (
+            <li class="stk-item" data-layer={i}>
+              <p class="stk-row">
+                <span class="stk-n mono">{pad(i + 1)}</span>
+                <span class="stk-name mono">{l.name}</span>
+                <b class="stk-what">{l.what}</b>
+              </p>
+              <div class="stk-more">
+                <p class="stk-detail">{l.detail}</p>
+                <ul class="stk-tags mono" aria-label={`Projects: ${l.name}`}>
+                  {l.tags.map((t) => (
+                    <li>{t.name}</li>
+                  ))}
+                </ul>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+      <p class="stk-note mono label">Every layer above shipped in production builds.</p>
+    </div>
+
+    <div class="stk-visual" aria-hidden="true">
+      <DayStill name="city" class="stk-still" sizes="(max-width: 1023px) 100vw, 60vw" />
+    </div>
+    <div class="gl-tags" data-city-tags aria-hidden="true"></div>
+  </div>
+</section>
+
+<style>
+  /* Static default (no JS, reduced motion, short screens): copy then an exploded CSS stack. */
+  .stk {
+    position: relative;
+    padding: clamp(96px, 12vw, 180px) var(--g) clamp(64px, 8vw, 120px);
+    background: var(--ink);
+  }
+
+  .stk-stage {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+    gap: clamp(32px, 5vw, 80px);
+    align-items: start;
+  }
+
+  .stk-title {
+    margin-top: clamp(28px, 4vw, 56px);
+    font-size: min(var(--t-h2), 9.5vh);
+  }
+
+  .stk-title em {
+    color: var(--signal);
+  }
+
+  .stk-sub {
+    margin-top: 20px;
+    max-width: 30em;
+    color: var(--muted);
+    font-size: var(--t-lead);
+    line-height: 1.45;
+  }
+
+  .stk-list {
+    position: relative;
+    margin-top: clamp(24px, 3vw, 40px);
+    border-top: 1px solid var(--line);
+  }
+
+  .stk-item {
+    padding: 14px 0 16px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .stk-row {
+    display: grid;
+    grid-template-columns: 34px 132px minmax(0, 1fr);
+    align-items: baseline;
+    gap: 10px;
+  }
+
+  .stk-n {
+    color: var(--muted);
+  }
+
+  .stk-name {
+    color: var(--muted);
+    font-size: 11.5px;
+  }
+
+  .stk-what {
+    font: 560 clamp(19px, 1.6vw, 24px) / 1.15 var(--display);
+    letter-spacing: -0.03em;
+  }
+
+  .stk-more {
+    padding: 8px 0 0 176px;
+  }
+
+  .stk-detail {
+    color: var(--muted);
+    font-size: 15px;
+    line-height: 1.45;
+    max-width: 34em;
+  }
+
+  .stk-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 10px;
+  }
+
+  .stk-tags li {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 10px;
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    font-size: 11px;
+    text-transform: none;
+    letter-spacing: 0.01em;
+  }
+
+  .stk-note {
+    margin-top: 14px;
+    font-size: 11px;
+  }
+
+  /* Themed still of the city cross-section: the picture when the live scene is not running. */
+  .stk-visual {
+    position: relative;
+    min-height: 420px;
+    margin-top: clamp(40px, 8vw, 140px);
+    border-radius: var(--r);
+    overflow: hidden;
+  }
+
+  .stk-visual :global(.stk-still) {
+    position: absolute;
+    inset: 0;
+    --still-pos: 62% 50%;
+  }
+
+  .gl-tags {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  /* Pinned, scrubbed version: a sticky stage the WebGL camera flies into. */
+  @media (prefers-reduced-motion: no-preference) and (min-height: 560px) {
+    :global(html.motion:not(.boot-fail)) .stk {
+      height: 250vh;
+      padding: 0;
+      background: transparent;
+    }
+
+    :global(html.motion:not(.boot-fail)) .stk-stage {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      height: 100svh;
+      padding: calc(var(--header-h) + 8px) var(--g) 28px;
+      overflow: hidden;
+      align-items: center;
+      /* Scrim behind the layer list: small mono labels stay ≥ 4.5:1 over the 3D scene. */
+      background: linear-gradient(90deg, color-mix(in srgb, var(--ink) 96%, transparent) 0%, color-mix(in srgb, var(--ink) 95%, transparent) 46%, transparent 64%);
+    }
+
+    :global(html.motion:not(.boot-fail)) .stk-item {
+      padding: 10px 0;
+    }
+
+    /* Inactive layers dim by colour, not opacity: --muted keeps small text ≥ 4.5:1 over the scrim. */
+    :global(html.motion:not(.boot-fail)) .stk-what {
+      transition: color 0.45s var(--ease-out);
+    }
+
+    :global(html.motion:not(.boot-fail)) .stk-item:not(:global(.on)) .stk-what {
+      color: var(--muted);
+    }
+
+    :global(html.motion:not(.boot-fail)) .stk-item:global(.on) .stk-n {
+      color: var(--signal-text);
+    }
+
+    /* Details of every layer share one slot under the list and cross-fade. */
+    :global(html.motion:not(.boot-fail)) .stk-more {
+      position: absolute;
+      top: calc(100% + 14px);
+      left: 0;
+      right: 0;
+      padding: 0;
+      opacity: 0;
+      transform: translateY(8px);
+      transition:
+        opacity 0.45s var(--ease-out),
+        transform 0.6s var(--ease);
+      pointer-events: none;
+    }
+
+    :global(html.motion:not(.boot-fail)) .stk-item:global(.on) .stk-more {
+      opacity: 1;
+      transform: none;
+    }
+
+    :global(html.motion:not(.boot-fail)) .stk-list {
+      margin-bottom: 118px;
+    }
+
+    :global(html.motion:not(.boot-fail)) .stk-note {
+      position: absolute;
+      left: var(--g);
+      bottom: 24px;
+    }
+
+    :global(html.motion:not(.boot-fail)) .stk-visual {
+      position: absolute;
+      inset: 0 0 0 42%;
+      margin: 0;
+    }
+
+    /* With the live WebGL stack drawn behind the pinned stage, the CSS one steps aside. */
+    :global(html.gl-live.motion:not(.boot-fail)) .stk-visual {
+      visibility: hidden;
+    }
+  }
+
+  /* Short desktop screens: drop the lead line so the list, details and note keep their room. */
+  @media (prefers-reduced-motion: no-preference) and (min-width: 1024px) and (max-height: 880px) {
+    :global(html.motion:not(.boot-fail)) .stk-sub {
+      display: none;
+    }
+  }
+
+  @media (max-width: 1023px) {
+    .stk-stage {
+      grid-template-columns: 1fr;
+    }
+
+    .stk-row {
+      grid-template-columns: 30px minmax(0, 1fr);
+    }
+
+    .stk-name {
+      grid-column: 2;
+    }
+
+    .stk-what {
+      grid-column: 2;
+    }
+
+    .stk-more {
+      padding-left: 40px;
+    }
+
+    .stk-visual {
+      min-height: 320px;
+    }
+  }
+
+  /* Phones and tablets, pinned: title on top, the 3D stack in the middle, one layer card at the bottom. */
+  @media (max-width: 1023px) and (prefers-reduced-motion: no-preference) and (min-height: 560px) {
+    :global(html.motion:not(.boot-fail)) .stk {
+      height: 200vh;
+    }
+
+    :global(html.motion:not(.boot-fail)) .stk-stage {
+      display: block;
+      background: linear-gradient(180deg, color-mix(in srgb, var(--ink) 96%, transparent) 0%, color-mix(in srgb, var(--ink) 93%, transparent) 22%, transparent 34%, transparent 50%, color-mix(in srgb, var(--ink) 96%, transparent) 70%);
+    }
+
+    :global(html.motion:not(.boot-fail)) .stk-sub {
+      display: none;
+    }
+
+    :global(html.motion:not(.boot-fail)) .stk-list {
+      position: absolute;
+      left: var(--g);
+      right: var(--g);
+      bottom: 58px;
+      height: 184px;
+      margin: 0;
+      border: 0;
+    }
+
+    :global(html.motion:not(.boot-fail)) .stk-item {
+      position: absolute;
+      inset: 0;
+      border: 0;
+      border-top: 1px solid var(--line);
+      padding-top: 12px;
+    }
+
+    :global(html.motion:not(.boot-fail)) .stk-item:not(:global(.on)) {
+      opacity: 0;
+    }
+
+    :global(html.motion:not(.boot-fail)) .stk-more {
+      position: static;
+      padding: 8px 0 0 40px;
+    }
+
+    :global(html.motion:not(.boot-fail)) .stk-detail {
+      font-size: 14px;
+    }
+
+    :global(html.motion:not(.boot-fail)) .stk-tags li {
+      padding: 4px 8px;
+      font-size: 10.5px;
+    }
+
+    :global(html.motion:not(.boot-fail)) .stk-note {
+      left: var(--g);
+      right: var(--g);
+      bottom: 16px;
+      font-size: 10px;
+    }
+
+    :global(html.motion:not(.boot-fail)) .stk-visual {
+      inset: 30% 0 auto;
+      height: 34%;
+      min-height: 0;
+    }
+
+  }
+
+  @media (max-width: 1023px) and (max-height: 700px) and (prefers-reduced-motion: no-preference) and (min-height: 560px) {
+    :global(html.motion:not(.boot-fail)) .stk-detail {
+      display: none;
+    }
+
+    :global(html.motion:not(.boot-fail)) .stk-list {
+      height: 120px;
+    }
+  }
+</style>

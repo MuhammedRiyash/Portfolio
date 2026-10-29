@@ -1,0 +1,455 @@
+---
+import Base from '../layouts/Base.astro';
+import ThemeSwitch from '../components/ThemeSwitch.astro';
+import {
+  person,
+  summary,
+  experience,
+  projectsCv,
+  skills,
+  education,
+  certifications,
+} from '../data/site';
+
+const title = 'CV — Muhammed Riyash J, Senior Full-Stack Developer';
+const description =
+  'Printable CV of Muhammed Riyash J, Senior Full-Stack Developer in Bengaluru: experience in headless commerce, freelance WordPress/Shopify work, projects, skills and education.';
+---
+
+<Base title={title} description={description} path="/cv/" bodyClass="cv-body">
+  <a class="skip" href="#cv">Skip to content</a>
+  <header class="cv-bar">
+    <a href="/" class="cv-back">← Cinematic version</a>
+    <div class="cv-actions">
+      <ThemeSwitch compact />
+      <button type="button" class="cv-btn" data-print>Print / Save as PDF</button>
+      <a class="cv-btn cv-btn--solid" href={person.resume} download>Download PDF</a>
+    </div>
+  </header>
+
+  <main id="cv" class="cv">
+    <header class="cv-head">
+      <h1>{person.name}</h1>
+      <p class="cv-title">{person.title} · {person.location}</p>
+      <ul class="cv-contact">
+        <li><a href={`mailto:${person.email}`}>{person.email}</a></li>
+        <li><a href={person.phoneHref}>{person.phone}</a></li>
+        <li><a href={person.linkedin}>linkedin.com/in/muhammedriyash</a></li>
+        <li><a href={person.github}>github.com/MuhammedRiyash</a></li>
+        <li><a href={person.url}>md-riyash-portfolio.vercel.app</a></li>
+      </ul>
+    </header>
+
+    <section aria-labelledby="cv-summary">
+      <h2 id="cv-summary">Summary</h2>
+      <p>{summary}</p>
+    </section>
+
+    <section aria-labelledby="cv-exp">
+      <h2 id="cv-exp">Experience</h2>
+      {
+        experience.map((r) => (
+          <article class="cv-role">
+            <div class="cv-role-head">
+              <h3>
+                {r.company} <span>— {r.role}</span>
+              </h3>
+              <p class="cv-meta">
+                {r.period} · {r.place}
+              </p>
+            </div>
+            <ul>
+              {r.bullets.map((b) => (
+                <li>{b}</li>
+              ))}
+            </ul>
+          </article>
+        ))
+      }
+    </section>
+
+    <section aria-labelledby="cv-proj">
+      <h2 id="cv-proj">Freelance client projects</h2>
+      <ul class="cv-projects">
+        {
+          projectsCv.map((p) => (
+            <li>
+              <h3>
+                {p.href ? <a href={p.href}>{p.name}</a> : p.name}
+                {p.year && <span class="cv-meta"> · {p.year}</span>}
+              </h3>
+              <p>{p.text}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    <section aria-labelledby="cv-skills">
+      <h2 id="cv-skills">Skills</h2>
+      <dl class="cv-skills">
+        {
+          skills.map((s) => (
+            <div>
+              <dt>{s.group}</dt>
+              <dd>{s.items.join(', ')}</dd>
+            </div>
+          ))
+        }
+      </dl>
+    </section>
+
+    <div class="cv-two">
+      <section aria-labelledby="cv-edu">
+        <h2 id="cv-edu">Education</h2>
+        <ul class="cv-plain">
+          {
+            education.map((e) => (
+              <li>
+                <h3>{e.school}</h3>
+                <p>{e.degree}</p>
+                <p class="cv-meta">{e.period}</p>
+              </li>
+            ))
+          }
+        </ul>
+      </section>
+      <section aria-labelledby="cv-cert">
+        <h2 id="cv-cert">Certifications &amp; languages</h2>
+        <ul class="cv-plain">
+          {certifications.map((c) => <li>{c}</li>)}
+          <li>{person.languages.join(' · ')}</li>
+        </ul>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    document.querySelector('[data-print]')?.addEventListener('click', () => window.print());
+  </script>
+</Base>
+
+<style>
+  /* On screen the CV follows the site theme; print is always black ink on white paper (see @media print). */
+  :global(body.cv-body) {
+    --paper: var(--bg);
+    --text: var(--bone);
+    --soft: var(--muted);
+    --rule: var(--line-strong);
+    background: var(--paper);
+    color: var(--text);
+    font-size: 15.5px;
+  }
+
+  .cv-bar {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px var(--g);
+    background: color-mix(in srgb, var(--bg) 92%, transparent);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .cv-back {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    font: 500 13px/1 var(--mono);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .cv-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .cv-btn {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 16px;
+    border-radius: 999px;
+    border: 1px solid var(--rule);
+    font: 500 14px/1 var(--sans);
+  }
+
+  .cv-btn:hover {
+    border-color: var(--text);
+  }
+
+  .cv-btn--solid {
+    background: var(--text);
+    color: var(--paper);
+    border-color: var(--text);
+  }
+
+  .cv {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: clamp(32px, 6vw, 72px) var(--g) 96px;
+  }
+
+  :global(body.cv-body :focus-visible) {
+    outline-color: var(--signal-text);
+  }
+
+  .cv-head h1 {
+    font: 580 clamp(38px, 6vw, 60px) / 0.95 var(--display);
+    letter-spacing: -0.045em;
+  }
+
+  .cv-title {
+    margin-top: 10px;
+    font-size: 18px;
+    color: var(--soft);
+  }
+
+  .cv-contact {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 18px;
+    margin-top: 16px;
+    font: 450 13px/1.4 var(--mono);
+  }
+
+  .cv-contact a {
+    display: inline-block;
+    padding: 6px 0;
+    text-decoration: underline;
+    text-decoration-color: var(--rule);
+    text-underline-offset: 3px;
+  }
+
+  .cv section {
+    margin-top: 40px;
+  }
+
+  .cv h2 {
+    padding-bottom: 8px;
+    margin-bottom: 16px;
+    border-bottom: 1px solid var(--text);
+    font: 500 12.5px/1 var(--mono);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .cv h3 {
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  .cv h3 span {
+    font-weight: 400;
+    color: var(--soft);
+  }
+
+  .cv p,
+  .cv li {
+    line-height: 1.55;
+  }
+
+  .cv-meta {
+    color: var(--soft);
+    font: 450 12.5px/1.4 var(--mono);
+  }
+
+  .cv-role + .cv-role {
+    margin-top: 24px;
+  }
+
+  .cv-role-head {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 4px 16px;
+    margin-bottom: 8px;
+  }
+
+  .cv-role ul,
+  .cv-projects {
+    display: grid;
+    gap: 6px;
+  }
+
+  .cv-role li {
+    position: relative;
+    padding-left: 16px;
+  }
+
+  .cv-role li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.75em;
+    width: 7px;
+    height: 1px;
+    background: var(--text);
+  }
+
+  .cv-projects {
+    gap: 14px;
+  }
+
+  .cv-projects a,
+  .cv-plain a {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .cv-skills {
+    display: grid;
+    gap: 8px;
+  }
+
+  .cv-skills div {
+    display: grid;
+    grid-template-columns: 190px 1fr;
+    gap: 12px;
+  }
+
+  .cv-skills dt {
+    font-weight: 600;
+  }
+
+  .cv-two {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+  }
+
+  .cv-plain {
+    display: grid;
+    gap: 10px;
+  }
+
+  @media (max-width: 640px) {
+    .cv-skills div,
+    .cv-two {
+      grid-template-columns: 1fr;
+    }
+
+    .cv-skills div {
+      gap: 2px;
+    }
+
+    .cv-two {
+      gap: 0;
+    }
+  }
+
+  @media print {
+    @page {
+      size: A4;
+      margin: 11mm 13mm 12mm;
+    }
+
+    /* Must outrank `:root[data-theme='…'] { color-scheme: dark }`, or Chrome paints the page margins dark. */
+    :global(html),
+    :global(html:root[data-theme]) {
+      background: #fff;
+      color-scheme: light;
+    }
+
+    :global(body.cv-body) {
+      --paper: #fff;
+      --text: #000;
+      --soft: #4a4a4a;
+      --rule: rgb(0 0 0 / 0.18);
+      background: #fff;
+      color: #000;
+      font-size: 9.2pt;
+    }
+
+    :global(.skip),
+    .cv-bar {
+      display: none !important;
+    }
+
+    .cv {
+      max-width: none;
+      padding: 0;
+    }
+
+    .cv-head h1 {
+      font-size: 26pt;
+    }
+
+    .cv-title {
+      font-size: 12pt;
+      margin-top: 4pt;
+    }
+
+    .cv-contact {
+      font-size: 8.5pt;
+      margin-top: 8pt;
+    }
+
+    .cv-contact a {
+      padding: 0;
+      text-decoration: none;
+    }
+
+    .cv section {
+      margin-top: 10pt;
+    }
+
+    .cv h2 {
+      margin-bottom: 6pt;
+      padding-bottom: 3pt;
+      font-size: 8pt;
+    }
+
+    .cv h3 {
+      font-size: 9.8pt;
+    }
+
+    .cv-meta {
+      font-size: 8pt;
+    }
+
+    .cv p,
+    .cv li {
+      line-height: 1.34;
+    }
+
+    .cv-role li,
+    .cv-projects li,
+    .cv-skills div,
+    .cv-plain li {
+      break-inside: avoid;
+    }
+
+    .cv-role + .cv-role {
+      margin-top: 8pt;
+    }
+
+    .cv-role ul,
+    .cv-projects,
+    .cv-skills,
+    .cv-plain {
+      gap: 2pt;
+    }
+
+    .cv-role-head {
+      margin-bottom: 3pt;
+    }
+
+    .cv h2 {
+      break-after: avoid;
+    }
+
+    .cv-skills div {
+      grid-template-columns: 130pt 1fr;
+    }
+  }
+</style>

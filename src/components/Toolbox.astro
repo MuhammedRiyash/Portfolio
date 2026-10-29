@@ -1,0 +1,168 @@
+---
+import { skills } from '../data/site';
+
+const pad = (n: number) => String(n).padStart(2, '0');
+/** Two rows for the scroll-velocity marquee: front of house, then back of house. */
+const rows = [
+  ['Astro SSR', 'Preact', 'Next.js', 'React', 'TypeScript', 'Tailwind CSS', 'Shopify Liquid', 'WooCommerce'],
+  ['Laravel', 'Medusa v2', 'Node.js', 'Prisma', 'PostgreSQL', 'MySQL', 'Razorpay', 'Playwright', 'Cloudflare'],
+];
+---
+
+<section class="tb wrap" id="toolbox" aria-labelledby="tb-title">
+  <p class="sec-head mono">[05] Toolbox</p>
+  <h2 id="tb-title" class="display tb-title" data-reveal>
+    <span class="ln"><span>Front to back,</span></span>
+    <span class="ln"><span>tested against <em>the live store.</em></span></span>
+  </h2>
+
+  <div class="groups">
+    {
+      skills.map((g, i) => (
+        <div class="group fade" style={`--d:${(i % 3) * 0.08}s`}>
+          <h3 class="mono">
+            <span class="label">{pad(i + 1)}</span> {g.group}
+          </h3>
+          <ul class="mono">
+            {g.items.map((s) => (
+              <li>{s}</li>
+            ))}
+          </ul>
+        </div>
+      ))
+    }
+  </div>
+</section>
+
+<div class="vm" aria-hidden="true" data-vmarquee>
+  {
+    rows.map((row, r) => (
+      <div class={`vm-row vm-row-${r}`}>
+        <div class="vm-track" data-vm-track>
+          {[...row, ...row].map((s, i) => (
+            <span class:list={['vm-item', { hot: i % row.length === 2 }]}>
+              {s}
+              <i class="vm-sep" />
+            </span>
+          ))}
+        </div>
+      </div>
+    ))
+  }
+</div>
+
+<style>
+  .tb {
+    padding-top: clamp(96px, 12vw, 180px);
+    padding-bottom: clamp(64px, 8vw, 120px);
+  }
+
+  .tb-title {
+    margin-top: clamp(36px, 5vw, 72px);
+    font-size: var(--t-h2);
+  }
+
+  .tb-title em {
+    color: var(--signal);
+  }
+
+  .groups {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 40px 32px;
+    margin-top: clamp(48px, 6vw, 96px);
+  }
+
+  .group {
+    padding-top: 16px;
+    border-top: 1px solid var(--line-strong);
+  }
+
+  .group h3 {
+    font-size: 12.5px;
+    margin-bottom: 14px;
+  }
+
+  .group ul {
+    display: grid;
+    gap: 2px;
+    color: var(--muted);
+    font-size: 13px;
+    text-transform: none;
+    letter-spacing: 0.01em;
+  }
+
+  .group li {
+    padding: 5px 0;
+    transition: color 0.3s;
+  }
+
+  .group li:hover {
+    color: var(--bone);
+  }
+
+  /* Scroll-velocity marquee: position follows scroll, skew follows its speed (sections.ts). */
+  .vm {
+    display: grid;
+    gap: 6px;
+    padding-block: clamp(36px, 5vw, 72px);
+    border-block: 1px solid var(--line);
+    overflow: hidden;
+  }
+
+  .vm-row {
+    overflow: hidden;
+  }
+
+  .vm-track {
+    display: flex;
+    width: max-content;
+    will-change: transform;
+  }
+
+  .vm-row-1 .vm-track {
+    transform: translateX(-30%);
+  }
+
+  .vm-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    padding-right: 0.4em;
+    font: 560 clamp(40px, 6.4vw, 112px) / 1.02 var(--display);
+    /* The marquee runs up to 112 px with diagonal pairs (y·w, x·t, f·y): any negative tracking makes them collide. */
+    letter-spacing: 0;
+    white-space: nowrap;
+    color: var(--bone);
+  }
+
+  .vm-row-1 .vm-item {
+    color: transparent;
+    -webkit-text-stroke: 1px var(--line-strong);
+  }
+
+  .vm-item.hot {
+    color: var(--signal);
+    -webkit-text-stroke: 0;
+  }
+
+  .vm-sep {
+    width: 0.18em;
+    height: 0.18em;
+    border-radius: 50%;
+    background: var(--muted);
+    flex: none;
+  }
+
+  @media (max-width: 1023px) {
+    .groups {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 599px) {
+    .groups {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

@@ -1,0 +1,222 @@
+---
+import { timeline, education, certifications } from '../data/site';
+---
+
+<section class="xp wrap" id="experience" aria-labelledby="xp-title">
+  <p class="sec-head mono">[04] Experience</p>
+  <h2 id="xp-title" class="display xp-title" data-reveal>
+    <span class="ln"><span>Three years,</span></span>
+    <span class="ln"><span><em>one direction:</em> deeper into commerce.</span></span>
+  </h2>
+
+  <div class="tl" data-tl>
+    <span class="tl-line" aria-hidden="true"><i data-tl-fill></i><b data-tl-dot></b></span>
+    <ol>
+    {
+      timeline.map((t) => (
+        <li class="tl-item" data-tl-item>
+          <p class="tl-period mono">{t.period}</p>
+          <div class="tl-body">
+            <h3 class="display tl-company">{t.company}</h3>
+            <p class="tl-role">{t.role}</p>
+            <ul class="tl-lines">
+              {t.lines.map((l) => (
+                <li>{l}</li>
+              ))}
+            </ul>
+          </div>
+        </li>
+      ))
+    }
+    </ol>
+  </div>
+
+  <div class="edu">
+    <div>
+      <h3 class="mono label">Education</h3>
+      <ul>
+        {
+          education.map((e) => (
+            <li>
+              <b>{e.degree}</b>
+              <span>{e.school}</span>
+              <span class="mono label">{e.period}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+    <div>
+      <h3 class="mono label">Certifications</h3>
+      <ul>
+        {
+          certifications.map((c) => (
+            <li>
+              <b>{c}</b>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </div>
+</section>
+
+<style>
+  .xp {
+    padding-top: clamp(96px, 12vw, 180px);
+    padding-bottom: clamp(80px, 10vw, 140px);
+  }
+
+  .xp-title {
+    margin-top: clamp(36px, 5vw, 72px);
+    font-size: var(--t-h2);
+    max-width: 14em;
+  }
+
+  .xp-title em {
+    color: var(--muted);
+  }
+
+  .tl {
+    position: relative;
+    margin-top: clamp(56px, 7vw, 110px);
+    padding-left: clamp(36px, 5vw, 72px);
+  }
+
+  .tl-line {
+    position: absolute;
+    left: 6px;
+    top: 8px;
+    bottom: 8px;
+    width: 1px;
+    background: var(--line-strong);
+  }
+
+  .tl-line i {
+    position: absolute;
+    inset: 0;
+    background: var(--bone);
+    transform-origin: 50% 0;
+    transform: scaleY(var(--p, 1));
+  }
+
+  .tl-line b {
+    position: absolute;
+    left: -6px;
+    top: calc(var(--p, 1) * 100%);
+    width: 13px;
+    height: 13px;
+    margin-top: -6px;
+    border-radius: 50%;
+    background: var(--signal);
+    box-shadow: 0 0 0 6px var(--signal-soft);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    :global(html.motion:not(.boot-fail)) .tl-line {
+      --p: 0;
+    }
+
+    :global(html.motion:not(.boot-fail)) .tl-item {
+      opacity: 0.28;
+      transition: opacity 0.6s var(--ease-out);
+    }
+
+    :global(html.motion:not(.boot-fail)) .tl-item:global(.on) {
+      opacity: 1;
+    }
+  }
+
+  .tl-item {
+    display: grid;
+    grid-template-columns: minmax(150px, 3fr) minmax(0, 9fr);
+    gap: 24px;
+    padding: 32px 0 40px;
+    border-top: 1px solid var(--line);
+  }
+
+  .tl-item:first-of-type {
+    border-top: 0;
+    padding-top: 0;
+  }
+
+  .tl-period {
+    color: var(--muted);
+    padding-top: 10px;
+  }
+
+  .tl-company {
+    font-size: clamp(36px, 4.4vw, 68px);
+  }
+
+  .tl-role {
+    margin-top: 10px;
+    color: var(--muted);
+  }
+
+  .tl-lines {
+    display: grid;
+    gap: 8px;
+    margin-top: 18px;
+    max-width: 46em;
+    font-size: 16px;
+  }
+
+  .tl-lines li {
+    position: relative;
+    padding-left: 22px;
+  }
+
+  .tl-lines li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.72em;
+    width: 10px;
+    height: 1px;
+    background: var(--muted);
+  }
+
+  .edu {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    margin-top: 32px;
+    padding-top: 28px;
+    border-top: 1px solid var(--line);
+  }
+
+  .edu ul {
+    display: grid;
+    gap: 16px;
+    margin-top: 14px;
+  }
+
+  .edu li {
+    display: grid;
+    gap: 2px;
+  }
+
+  .edu b {
+    font-weight: 500;
+  }
+
+  .edu li > span:not(.mono) {
+    color: var(--muted);
+  }
+
+  @media (max-width: 767px) {
+    .tl-item {
+      grid-template-columns: 1fr;
+      gap: 6px;
+    }
+
+    .tl-period {
+      padding-top: 0;
+    }
+
+    .edu {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

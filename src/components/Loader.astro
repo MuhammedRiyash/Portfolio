@@ -1,0 +1,149 @@
+---
+/* Ink curtain with a 000→100 counter driven by real milestones (see scripts/loader.ts).
+   Hidden without JS (noscript style + .js gate) and skipped for repeat visits / reduced motion. */
+---
+
+<div id="loader" class="loader" aria-hidden="true">
+  <div class="loader-curtain" data-curtain>
+    <div class="loader-top mono">
+      <span>Muhammed Riyash J</span>
+      <span>Portfolio — Bengaluru</span>
+    </div>
+    <div class="loader-mid">
+      <ul class="loader-steps mono" data-steps>
+        <li data-step="fonts"><i></i>Type</li>
+        <li data-step="still"><i></i>Frame</li>
+        <li data-step="scene"><i></i>Scene</li>
+      </ul>
+    </div>
+    <div class="loader-bottom">
+      <div class="loader-count display" data-count>
+        <span class="digit"><span>0</span></span><span class="digit"><span>0</span></span><span class="digit"><span>0</span></span>
+      </div>
+      <div class="loader-track"><i data-bar></i></div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .loader {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    pointer-events: auto;
+  }
+
+  :global(html.js:not(.skip-intro)) .loader {
+    display: block;
+  }
+
+  :global(html.js:not(.skip-intro):not(.intro-done)) :global(body) {
+    overflow: hidden;
+  }
+
+  :global(html.intro-done) .loader {
+    visibility: hidden;
+    pointer-events: none;
+    transition: visibility 0s linear 0.7s;
+  }
+
+  :global(html.intro-done:not(.intro-anim)) .loader-curtain {
+    opacity: 0;
+    transition: opacity 0.6s var(--ease-out);
+  }
+
+  .loader-curtain {
+    position: absolute;
+    inset: 0;
+    background: var(--ink);
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    padding: calc(var(--g) * 0.6) var(--g);
+    will-change: transform;
+  }
+
+  .loader-top {
+    display: flex;
+    justify-content: space-between;
+    color: var(--muted);
+  }
+
+  .loader-mid {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+  }
+
+  .loader-steps {
+    display: grid;
+    gap: 10px;
+    color: var(--muted);
+  }
+
+  .loader-steps li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: color 0.4s var(--ease-out);
+  }
+
+  .loader-steps i {
+    width: 9px;
+    height: 9px;
+    border: 1px solid var(--line-strong);
+    border-radius: 50%;
+    transition:
+      background-color 0.4s var(--ease-out),
+      border-color 0.4s var(--ease-out);
+  }
+
+  .loader-steps li:global(.done) {
+    color: var(--bone);
+  }
+
+  .loader-steps li:global(.done) i {
+    background: var(--bone);
+    border-color: var(--bone);
+  }
+
+  .loader-bottom {
+    display: grid;
+    gap: 18px;
+  }
+
+  .loader-count {
+    display: flex;
+    font-size: clamp(120px, 24vw, 340px);
+    line-height: 0.8;
+    letter-spacing: -0.04em;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .digit {
+    display: inline-block;
+    overflow: hidden;
+    height: 0.86em;
+    padding-top: 0.02em;
+  }
+
+  .digit > span {
+    display: block;
+    width: 0.5em;
+    text-align: center;
+  }
+
+  .loader-track {
+    height: 1px;
+    background: var(--line);
+    overflow: hidden;
+  }
+
+  .loader-track i {
+    display: block;
+    height: 100%;
+    background: var(--signal);
+    transform: scaleX(0);
+    transform-origin: 0 50%;
+  }
+</style>

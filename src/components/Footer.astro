@@ -1,0 +1,178 @@
+---
+import { person } from '../data/site';
+
+const year = new Date().getFullYear();
+---
+
+<div class="flood" data-flood>
+  <div class="flood-stage">
+    <footer class="foot" data-flood-disc>
+      <div class="foot-top">
+        <nav class="foot-col" aria-label="Footer">
+          <p class="mono">Index</p>
+          <ul>
+            <li><a class="ulink" href="#product">Product</a></li>
+            <li><a class="ulink" href="#about">About</a></li>
+            <li><a class="ulink" href="#work">Work</a></li>
+            <li><a class="ulink" href="#experience">Experience</a></li>
+            <li><a class="ulink" href="#toolbox">Toolbox</a></li>
+            <li><a class="ulink" href="/cv/">CV — quick view</a></li>
+          </ul>
+        </nav>
+        <div class="foot-col">
+          <p class="mono">Elsewhere</p>
+          <ul>
+            <li><a class="ulink" href={person.linkedin} target="_blank" rel="noopener">LinkedIn</a></li>
+            <li><a class="ulink" href={person.github} target="_blank" rel="noopener">GitHub</a></li>
+            <li><a class="ulink" href={person.whatsapp} target="_blank" rel="noopener">WhatsApp</a></li>
+            <li><a class="ulink" href={`mailto:${person.email}`}>Email</a></li>
+          </ul>
+        </div>
+        <div class="foot-col">
+          <p class="mono">Local time</p>
+          <p class="foot-clock display" data-foot-clock>Bengaluru</p>
+          <p class="foot-avail"><span class="dot" aria-hidden="true"></span> Open to senior full-stack roles</p>
+          <p class="foot-fl"><a class="ulink" href="https://muhammedriyash.github.io/Website/" target="_blank" rel="noopener">Web development services → muhammedriyash.github.io/Website</a></p>
+        </div>
+      </div>
+      <p class="foot-word display" aria-hidden="true">MD Riyash<span class="accent">.</span></p>
+      <div class="foot-base mono">
+        <span>© <span data-year>{year}</span> Muhammed Riyash J</span>
+        <span>Built with Astro, three.js and GSAP</span>
+        <a href="#top" class="ulink">Back to top ↑</a>
+      </div>
+    </footer>
+  </div>
+</div>
+
+<style>
+  /* Flood + footer */
+  .flood {
+    position: relative;
+  }
+
+  .flood-stage {
+    position: relative;
+  }
+
+  .foot {
+    position: relative;
+    min-height: 100vh;
+    min-height: 100svh;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    gap: 24px;
+    padding: calc(var(--header-h) + 24px) var(--g) 24px;
+    background: var(--bone);
+    color: var(--ink);
+    --signal: var(--signal-on-bone);
+    --focus: var(--ink);
+    overflow: hidden;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    :global(html.motion:not(.boot-fail)) .flood {
+      height: 160vh;
+    }
+
+    :global(html.motion:not(.boot-fail)) .flood-stage {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      height: 100svh;
+    }
+
+    :global(html.motion:not(.boot-fail)) .foot {
+      height: 100%;
+      min-height: 0;
+      clip-path: circle(0% at 50% 50%);
+      will-change: clip-path;
+    }
+  }
+
+  .foot-top {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 24px;
+  }
+
+  .foot-col > p.mono {
+    color: var(--muted-on-bone);
+    margin-bottom: 14px;
+  }
+
+  .foot-col ul {
+    display: grid;
+    gap: 2px;
+  }
+
+  .foot-col a {
+    display: inline-block;
+    padding: 8px 0;
+    font-size: 18px;
+  }
+
+  .foot-clock {
+    font-size: clamp(36px, 3.8vw, 56px);
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .foot-fl {
+    margin-top: 10px;
+    font-size: 15px;
+    overflow-wrap: anywhere;
+  }
+
+  .foot-fl a {
+    display: inline-block;
+    padding: 12px 0;
+  }
+
+  .foot-avail {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 12px;
+  }
+
+  .foot-word {
+    align-self: end;
+    font-size: clamp(64px, 15vw, 300px);
+    line-height: 0.82;
+    padding-bottom: 0.12em;
+    letter-spacing: -0.02em;
+    margin-left: -0.03em;
+    white-space: nowrap;
+  }
+
+  .foot-base {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 8px 24px;
+    padding-top: 16px;
+    border-top: 1px solid var(--line-on-bone);
+    color: var(--muted-on-bone);
+  }
+
+  .foot-base a {
+    color: var(--ink);
+    display: inline-block;
+    padding: 13px 0;
+  }
+
+  @media (max-width: 767px) {
+    .foot-top {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .foot-top .foot-col:last-child {
+      grid-column: 1 / -1;
+    }
+
+    .foot {
+      padding-top: calc(var(--header-h) + 8px);
+    }
+  }
+</style>

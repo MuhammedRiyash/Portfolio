@@ -1,0 +1,43 @@
+---
+import Base from '../layouts/Base.astro';
+import Loader from '../components/Loader.astro';
+import Header from '../components/Header.astro';
+import Hero from '../components/Hero.astro';
+import Stack from '../components/Stack.astro';
+import Statement from '../components/Statement.astro';
+import Reel from '../components/Reel.astro';
+import Work from '../components/Work.astro';
+import Freelance from '../components/Freelance.astro';
+import Experience from '../components/Experience.astro';
+import Toolbox from '../components/Toolbox.astro';
+import Finale from '../components/Finale.astro';
+import Footer from '../components/Footer.astro';
+
+const title = 'Muhammed Riyash J — Senior Full-Stack Developer, Bengaluru';
+const ogTitle = 'Muhammed Riyash J — Senior Full-Stack Developer · From first pixel to final payment.';
+const description =
+  'From first pixel to final payment. Muhammed Riyash J, senior full-stack developer in Bengaluru — headless storefronts, commerce platforms and payment flows. 3+ years, 20+ sites shipped.';
+---
+
+<Base title={title} ogTitle={ogTitle} description={description} path="/" cinematic>
+  <a class="skip" href="#main">Skip to content</a>
+  <Loader />
+  <Header />
+  <canvas class="gl" data-gl aria-hidden="true"></canvas>
+  <main id="main">
+    <Hero />
+    <Stack />
+    <Statement />
+    <Reel />
+    <Work />
+    <Freelance />
+    <Experience />
+    <Toolbox />
+    <Finale />
+  </main>
+  <Footer />
+  <div class="grain" aria-hidden="true"></div>
+  <script>
+    import '../scripts/main';
+  </script>
+</Base>
