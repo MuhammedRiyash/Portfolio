@@ -50,6 +50,8 @@ export function startGL({ canvas, mobile }: GLOptions) {
 
   const renderer = new WebGLRenderer({ canvas, antialias: !mobile, alpha: true, stencil: false, powerPreference: 'high-performance' });
   renderer.toneMapping = ACESFilmicToneMapping;
+  // shader info-log queries are synchronous GPU round trips on each program's first draw; dev builds keep them
+  renderer.debug.checkShaderErrors = import.meta.env.DEV;
   const dprCap = mobile ? 1.25 : 1.75;
   const pmrem = new PMREMGenerator(renderer);
   const room = new RoomEnvironment();
@@ -81,7 +83,7 @@ export function startGL({ canvas, mobile }: GLOptions) {
     const lead = document.createElement('i');
     lead.className = 'gl-lead';
     cityTags?.append(lead, el);
-    return { el, lead, w: 0 };
+    return { el, lead, w: 0, h: 0 };
   });
   const agentTag = document.createElement('span');
   agentTag.className = 'gl-tag gl-tag--agent';
@@ -110,7 +112,7 @@ export function startGL({ canvas, mobile }: GLOptions) {
     street?.resize(W, H);
     if (heroStage) radius = parseFloat(getComputedStyle(heroStage).borderTopLeftRadius) || 0;
     clock.refresh();
-    layerTags.forEach((t) => (t.w = 0));
+    layerTags.forEach((t) => (t.w = t.h = 0));
   };
   resize();
   renderer.compile(world.scene, world.camera);
@@ -157,13 +159,16 @@ export function startGL({ canvas, mobile }: GLOptions) {
   };
   syncDevices();
 
-  /* Street: lives while the freelance section is a pinned rail (sections.ts sets data-mode="rail"). */
+  /* Street: lives while the freelance section is a pinned rail (sections.ts sets data-mode="rail" under its own
+     breakpoint, ≥ 1024×560, which is lower than the chapters' pin). */
   const syncStreet = () => {
-    streetOn = devMQ.matches && freelance?.dataset.mode === 'rail';
+    streetOn = freelance?.dataset.mode === 'rail';
     if (streetOn && !street) {
       street = createStreet(garage, env, mobile);
       street.theme(pal);
       street.resize(W, H);
+      // link its programs in the background, not on the first rail frame
+      renderer.compileAsync(street.scene, street.camera).catch(() => undefined);
     }
     root.classList.toggle('gl-street', streetOn);
   };
@@ -175,7 +180,6 @@ export function startGL({ canvas, mobile }: GLOptions) {
   }
   devMQ.addEventListener('change', () => {
     syncDevices();
-    syncStreet();
     sync();
   });
 
@@ -193,14 +197,17 @@ export function startGL({ canvas, mobile }: GLOptions) {
       el.style.opacity = o;
       lead.style.opacity = o;
       if (l && l.o > 0.01) {
-        el.style.transform = `translate3d(${l.x.toFixed(1)}px, ${l.y.toFixed(1)}px, 0)`;
-        // the tag hangs left of its anchor; the line leaves from its left edge (width measured once per resize)
+        // the tag hangs left of its anchor (size measured once per resize); the line leaves from its left edge
         tag.w ||= el.offsetWidth;
+        tag.h ||= el.offsetHeight;
         const x0 = l.x - tag.w;
+        // never over the floor's sign: when the plaque's top edge sits just below the tag, lift the tag clear of it
+        const y = l.sr > x0 && l.sl < l.x && l.st > l.y ? Math.min(l.y, l.st - 6 - tag.h / 2) : l.y;
+        el.style.transform = `translate3d(${l.x.toFixed(1)}px, ${y.toFixed(1)}px, 0)`;
         const dx = l.px - x0;
-        const dy = l.py - l.y;
+        const dy = l.py - y;
         lead.style.width = `${Math.hypot(dx, dy).toFixed(1)}px`;
-        lead.style.transform = `translate3d(${x0.toFixed(1)}px, ${l.y.toFixed(1)}px, 0) rotate(${Math.atan2(dy, dx).toFixed(4)}rad)`;
+        lead.style.transform = `translate3d(${x0.toFixed(1)}px, ${y.toFixed(1)}px, 0) rotate(${Math.atan2(dy, dx).toFixed(4)}rad)`;
       }
       el.classList.toggle('on', !!l && l.on > 0.5);
       lead.classList.toggle('on', !!l && l.on > 0.5);

@@ -168,8 +168,9 @@ const streetTex = JSON.stringify({
     display: none;
   }
 
-  /* Desktop with motion: the grid becomes a pinned rail that scrolls sideways (sections.ts sets the height). */
-  @media (prefers-reduced-motion: no-preference) and (min-width: 1024px) and (min-height: 700px) {
+  /* Desktop with motion: the grid becomes a pinned rail that scrolls sideways (sections.ts sets the height).
+     Same breakpoint as `RAIL` in sections.ts; short windows (560–799 px) get the compact sizes below. */
+  @media (prefers-reduced-motion: no-preference) and (min-width: 1024px) and (min-height: 560px) {
     :global(html.motion:not(.boot-fail)) .fl[data-mode='rail'] .fl-pin {
       position: sticky;
       top: 0;
@@ -252,6 +253,61 @@ const streetTex = JSON.stringify({
       background: var(--signal);
       transform: scaleX(0);
       transform-origin: 0 50%;
+    }
+  }
+
+  /* Short desktop windows (1366×768 laptops ≈ 620–650 px of viewport): a compact rail. Smaller head and
+     captions, 16:10 posters (the captures are 16:10 homepages), and the card width follows the height left
+     over by head + captions + bar (≈ 410 px), so title, cards, captions and bar always fit. */
+  @media (prefers-reduced-motion: no-preference) and (min-width: 1024px) and (min-height: 560px) and (max-height: 799px) {
+    :global(html.motion:not(.boot-fail)) .fl[data-mode='rail'] .fl-pin {
+      padding-top: calc(var(--header-h) + 4px);
+      padding-bottom: 18px;
+    }
+
+    :global(html.motion:not(.boot-fail)) .fl[data-mode='rail'] .fl-title {
+      font-size: clamp(32px, min(4.6vw, 7.5vh), 74px);
+    }
+
+    :global(html.motion:not(.boot-fail)) .fl[data-mode='rail'] .fl-sub {
+      margin-top: 10px;
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    :global(html.motion:not(.boot-fail)) .fl[data-mode='rail'] .idx {
+      gap: 22px;
+      margin-top: 12px;
+    }
+
+    :global(html.motion:not(.boot-fail)) .fl[data-mode='rail'] .idx-link {
+      gap: 4px 10px;
+    }
+
+    :global(html.motion:not(.boot-fail)) .fl[data-mode='rail'] .idx-item {
+      width: clamp(220px, min(26vw, 48vh, (100vh - 410px) * 1.6), 420px);
+    }
+
+    :global(html.motion:not(.boot-fail)) .fl[data-mode='rail'] .poster {
+      aspect-ratio: 16 / 10;
+      margin-bottom: 6px;
+    }
+
+    :global(html.motion:not(.boot-fail)) .fl[data-mode='rail'] .idx-name {
+      font-size: 21px;
+    }
+
+    :global(html.motion:not(.boot-fail)) .fl[data-mode='rail'] .idx-what {
+      font-size: 13.5px;
+      line-height: 1.4;
+    }
+
+    :global(html.motion:not(.boot-fail)) .fl[data-mode='rail'] .idx-go {
+      padding-top: 2px;
+    }
+
+    :global(html.motion:not(.boot-fail)) .fl[data-mode='rail'] .fl-bar {
+      margin-top: 14px;
     }
   }
 

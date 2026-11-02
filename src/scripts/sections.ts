@@ -15,7 +15,10 @@ const win = (a: number, b: number, p: number) => {
   return t * t * (3 - 2 * t);
 };
 const easeOut = (t: number) => 1 - Math.pow(1 - t, 3);
+/** chapters: the text column (≈ 540–720 px tall at 1024–1440 wide) needs a 700 px stage */
 const PINNED = '(min-width: 1024px) and (min-height: 700px)';
+/** range rail: the compact rail (Freelance.astro, ≤ 799 px tall) fits title, cards, captions and bar from 560 px */
+const RAIL = '(min-width: 1024px) and (min-height: 560px)';
 
 export function initSections() {
   splitHeadings();
@@ -359,7 +362,7 @@ function freelanceRail() {
   if (!section || !rail || !pinEl || !track) return;
 
   const mm = gsap.matchMedia();
-  mm.add(PINNED, () => {
+  mm.add(RAIL, () => {
     let tween: gsap.core.Tween | null = null;
     const distance = () => {
       const pad = parseFloat(getComputedStyle(pinEl).paddingLeft) || 0;

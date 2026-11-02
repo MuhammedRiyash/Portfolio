@@ -54,7 +54,8 @@ export type WorldState = {
 
 export type Hit = { kind: 'agent' | 'car'; i: number };
 
-export type LayerTag = { x: number; y: number; px: number; py: number; o: number; on: number };
+/** CSS px: label point, prop point (leader end), opacity, active; `sl`/`sr`/`st` = the floor's sign plaque left, right, top */
+export type LayerTag = { x: number; y: number; px: number; py: number; o: number; on: number; sl: number; sr: number; st: number };
 
 export type World = {
   scene: Scene;
@@ -455,8 +456,24 @@ export function createWorld(kit: ModelKit, garage: Garage, env: Texture, mobile:
         tmp.copy(city.propAnchors[i]);
         city.group.localToWorld(tmp);
         const pp = project(tmp);
+        tmp.copy(city.signCorners[i][0]);
+        city.group.localToWorld(tmp);
+        const s0 = project(tmp);
+        tmp.copy(city.signCorners[i][1]);
+        city.group.localToWorld(tmp);
+        const s1 = project(tmp);
         const on = clamp(1 - Math.abs(activeLayer - i));
-        return { x: p.x, y: p.y, px: pp.x, py: pp.y, o: labels * (0.35 + on * 0.65) * (p.z < 1 ? 1 : 0), on };
+        return {
+          x: p.x,
+          y: p.y,
+          px: pp.x,
+          py: pp.y,
+          o: labels * (0.35 + on * 0.65) * (p.z < 1 ? 1 : 0),
+          on,
+          sl: Math.min(s0.x, s1.x),
+          sr: Math.max(s0.x, s1.x),
+          st: Math.min(s0.y, s1.y),
+        };
       });
       let agent: { x: number; y: number; text: string } | null = null;
       if (hovered?.kind === 'agent' && !nightMode) {

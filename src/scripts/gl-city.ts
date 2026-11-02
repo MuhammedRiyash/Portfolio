@@ -75,10 +75,12 @@ export type CityState = {
 
 export type City = {
   group: Group;
-  /** local anchor (top right inside each floor, on the cut face) for the DOM floor tags */
+  /** local anchor (right end of the slab above each floor, on the cut face) for the DOM floor tags */
   tagAnchors: Vector3[];
   /** local point of each floor's key prop (the leader line's end) */
   propAnchors: Vector3[];
+  /** local top-left / top-right corners of each floor's back-wall sign plaque (tags are kept off them) */
+  signCorners: [Vector3, Vector3][];
   /** the deploy rocket (not parented: the world adds it to the scene; it sits on the CI lift by day) */
   rocket: Group;
   /** where the rocket rests right now (it rides the lift), in the city's (= world) space */
@@ -182,16 +184,30 @@ export function createCity(mats: MatBook, glow: GlowField, lite: boolean): City 
     return l;
   });
 
-  /* ───────────── signs: one atlas, one draw (five back-wall plaques + the storefront fascia) ───────────── */
+  /* ───────────── signs: one atlas, one draw (five back-wall plaques + the storefront fascia) ─────────────
+     Each atlas cell has its plane's aspect (1024 px wide, height = 1024 × h / w), so the lettering is never
+     stretched; cells are stacked top to bottom. */
   const SIGNS = [...FLOORS.map((fl) => fl.sign), 'STOREFRONT'];
-  const atlas = canvasTexture(1024, 256 * SIGNS.length);
+  const SIGN_W = 0.92;
+  const SIGN_H = 0.18;
+  const FRONT_W = 1.2;
+  const FRONT_H = 0.15;
+  const SIGN_X = [0.55, 0.55, 1.0, -0.05, 0.55];
+  /** plaque centre height: 0.16 under each floor's ceiling */
+  const SIGN_Y = FLOORS.map((_, i) => (i === 0 ? ROOF : FLOOR[i - 1] - 0.1) - 0.16);
+  const cellH = SIGNS.map((_, i) => Math.round(i === SIGNS.length - 1 ? (1024 * FRONT_H) / FRONT_W : (1024 * SIGN_H) / SIGN_W));
+  const cellY = cellH.map((_, i) => cellH.slice(0, i).reduce((a, b) => a + b, 0));
+  const atlasH = cellY[SIGNS.length - 1] + cellH[SIGNS.length - 1];
+  const atlas = canvasTexture(1024, atlasH);
+  atlas.tex.anisotropy = 4;
   const signParts = SIGNS.map((_, i) => {
     const front = i === SIGNS.length - 1;
-    const g = new PlaneGeometry(front ? 1.2 : 0.92, front ? 0.15 : 0.18);
+    const g = new PlaneGeometry(front ? FRONT_W : SIGN_W, front ? FRONT_H : SIGN_H);
     const uv = g.attributes.uv;
-    for (let k = 0; k < uv.count; k++) uv.setY(k, 1 - (i + 1 - uv.getY(k)) / SIGNS.length);
+    // canvas rows run top-down, texture v bottom-up (flipY)
+    for (let k = 0; k < uv.count; k++) uv.setY(k, 1 - (cellY[i] + (1 - uv.getY(k)) * cellH[i]) / atlasH);
     if (front) g.translate(-0.7, ROOF + 0.19, FRONT - 0.04);
-    else g.translate([0.55, 0.55, 1.0, -0.05, 0.55][i], (i === 0 ? ROOF : FLOOR[i - 1] - 0.1) - 0.16, BACK + 0.062);
+    else g.translate(SIGN_X[i], SIGN_Y[i], BACK + 0.062);
     return g;
   });
   const signGeo = keep(mergeGeometries(signParts));
@@ -416,8 +432,15 @@ export function createCity(mats: MatBook, glow: GlowField, lite: boolean): City 
   const rocketHome = new Vector3(LIFT_X, FLOOR[4] + 0.03, 0.02);
   rocket.position.copy(rocketHome);
 
-  /* tags: top right inside each floor (label), key prop (leader line end) */
-  const tagAnchors = FLOOR.map((y, i) => new Vector3(CITY_W / 2 - 0.12, (i === 0 ? ROOF : FLOOR[i - 1] - 0.1) - 0.08, FRONT));
+  /* tags: on the cut face of the slab above each floor (label), key prop (leader line end). The slab band
+     holds no props or signs; gl-scene still lifts a tag off its floor's sign plaque when the view packs them. */
+  const tagAnchors = FLOOR.map((_, i) => new Vector3(CITY_W / 2 - 0.12, (i === 0 ? ROOF : FLOOR[i - 1] - 0.1) + 0.05, FRONT + 0.03));
+  // the painted plaque fills 976 / 1024 of the sign's width and 13–87 % of its height
+  const signCorners = FLOORS.map((_, i): [Vector3, Vector3] => {
+    const hw = (SIGN_W * 976) / 1024 / 2;
+    const top = SIGN_Y[i] + SIGN_H * 0.37;
+    return [new Vector3(SIGN_X[i] - hw, top, BACK + 0.062), new Vector3(SIGN_X[i] + hw, top, BACK + 0.062)];
+  });
   const propAnchors = [
     new Vector3(-0.74, 0.3, BACK + 0.2),
     new Vector3(GATE_X, FLOOR[1] + 0.36, 0.32),
@@ -429,31 +452,32 @@ export function createCity(mats: MatBook, glow: GlowField, lite: boolean): City 
   /* ───────────── painters ───────────── */
   const paintSigns = (p: Palette) => {
     const ctx = atlas.ctx;
-    ctx.clearRect(0, 0, 1024, 256 * SIGNS.length);
+    ctx.clearRect(0, 0, 1024, atlasH);
     SIGNS.forEach((t, i) => {
-      const y = i * 256;
+      const y = cellY[i];
+      const h = cellH[i];
       const front = i === SIGNS.length - 1;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       if (front) {
-        ctx.font = `700 150px ${f.display}`;
+        ctx.font = `700 ${Math.round(h * 0.66)}px ${f.display}`;
         ctx.fillStyle = p.name === 'forest' ? '#13261b' : '#fff8ef';
-        ctx.fillText(t, 512, y + 136);
+        ctx.fillText(t, 512, y + h * 0.53);
         return;
       }
       ctx.fillStyle = 'rgba(28,30,36,.92)';
       ctx.beginPath();
-      ctx.roundRect(24, y + 34, 976, 188, 40);
+      ctx.roundRect(24, y + h * 0.13, 976, h * 0.74, h * 0.16);
       ctx.fill();
       ctx.fillStyle = css(p.signal);
       ctx.beginPath();
-      ctx.arc(104, y + 128, 22, 0, Math.PI * 2);
+      ctx.arc(104, y + h / 2, h * 0.09, 0, Math.PI * 2);
       ctx.fill();
       ctx.fillStyle = '#fbf6ee';
-      let size = 76;
+      let size = Math.round(h * 0.3);
       ctx.font = `600 ${size}px ${f.mono}`;
-      while (ctx.measureText(t).width > 800 && size > 40) ctx.font = `600 ${(size -= 4)}px ${f.mono}`;
-      ctx.fillText(t, 560, y + 132);
+      while (ctx.measureText(t).width > 780 && size > 32) ctx.font = `600 ${(size -= 2)}px ${f.mono}`;
+      ctx.fillText(t, 560, y + h / 2 + 2);
     });
     ctx.textAlign = 'left';
     ctx.textBaseline = 'alphabetic';
@@ -735,6 +759,7 @@ export function createCity(mats: MatBook, glow: GlowField, lite: boolean): City 
     group,
     tagAnchors,
     propAnchors,
+    signCorners,
     rocket,
     rocketHome,
     update,

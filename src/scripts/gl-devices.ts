@@ -20,6 +20,7 @@
  */
 import {
   Box3,
+  DataTexture,
   DirectionalLight,
   Group,
   Mesh,
@@ -31,11 +32,10 @@ import {
   SRGBColorSpace,
   Scene,
   ShaderMaterial,
-  TextureLoader,
+  Texture,
   Vector3,
   InstancedMesh,
   type Object3D,
-  type Texture,
   type WebGLRenderer,
 } from 'three';
 import { CarRig, type Garage } from './gl-cars';
@@ -88,16 +88,17 @@ export type Devices = {
   dispose(): void;
 };
 
-/** Cover-fit a texture onto a screen of aspect `screenA` (height / width), top-aligned. */
+/** Cover-fit a texture onto a screen of aspect `screenA` (height / width), top-aligned. The screens are
+    ImageBitmaps uploaded with flipY = false (image top at v = 0), so v is mirrored here. */
 function cover(t: Texture, screenA: number) {
   const img = t.image as { width: number; height: number };
   const imgA = img.height / img.width;
   if (screenA > imgA) {
-    t.repeat.set(imgA / screenA, 1);
-    t.offset.set((1 - imgA / screenA) / 2, 0);
+    t.repeat.set(imgA / screenA, -1);
+    t.offset.set((1 - imgA / screenA) / 2, 1);
   } else {
-    t.repeat.set(1, screenA / imgA);
-    t.offset.set(0, 1 - screenA / imgA);
+    t.repeat.set(1, -screenA / imgA);
+    t.offset.set(0, screenA / imgA);
   }
 }
 
@@ -133,20 +134,33 @@ export function createDevices(renderer: WebGLRenderer, chapters: HTMLElement[], 
   const props = createPropKit();
   const shadowGeo = new PlaneGeometry(1, 1);
 
-  const loader = new TextureLoader();
   const anisotropy = renderer.capabilities.getMaxAnisotropy();
   const textures: Texture[] = [];
+  // Screens start on a 1×1 white map, so the real screenshot is a plain uniform swap (no second shader
+  // variant compiled mid-scroll); until it arrives the screen colour keeps it dark.
+  const blank = new DataTexture(new Uint8Array([255, 255, 255, 255]), 1, 1);
+  blank.colorSpace = SRGBColorSpace;
+  blank.needsUpdate = true;
+  let disposed = false;
   const load = (url: string | undefined, m: MeshBasicMaterial, screenA: number) => {
     if (!url) return;
-    loader.load(url, (tex) => {
-      tex.colorSpace = SRGBColorSpace;
-      tex.anisotropy = anisotropy;
-      cover(tex, screenA);
-      textures.push(tex);
-      m.map = tex;
-      m.color.set('#ffffff');
-      m.needsUpdate = true;
-    });
+    // Decoded off the main thread: an <img> source is decoded synchronously inside texImage2D on the frame
+    // it is first drawn (measured 25–37 ms per screenshot at 4× CPU throttle, a dropped frame each).
+    fetch(url)
+      .then((r) => (r.ok ? r.blob() : Promise.reject(new Error(`${r.status} ${url}`))))
+      .then((b) => createImageBitmap(b))
+      .then((bmp) => {
+        if (disposed) return bmp.close();
+        const tex = new Texture(bmp);
+        tex.flipY = false; // ignored for ImageBitmaps anyway; cover() mirrors v instead
+        tex.colorSpace = SRGBColorSpace;
+        tex.anisotropy = anisotropy;
+        tex.needsUpdate = true;
+        cover(tex, screenA);
+        textures.push(tex);
+        m.map = tex;
+      })
+      .catch(() => undefined);
   };
 
   /* DOM tag for the hovered prop (positioned per frame; the sr-only list in Work.astro carries the same labels) */
@@ -171,8 +185,8 @@ export function createDevices(renderer: WebGLRenderer, chapters: HTMLElement[], 
     scene.add(root);
 
     // screens: opaque, depth-writing, nudged forward so they never fight the glass
-    const screenMat = mats.add(new MeshBasicMaterial({ color: '#050506', toneMapped: false, polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1 }));
-    const phoneMat = mats.add(new MeshBasicMaterial({ color: '#050506', toneMapped: false, polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1 }));
+    const screenMat = mats.add(new MeshBasicMaterial({ map: blank, color: '#050506', toneMapped: false, polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1 }));
+    const phoneMat = mats.add(new MeshBasicMaterial({ map: blank, color: '#050506', toneMapped: false, polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1 }));
     const laptop = kit.laptop(SCREEN_ASPECT, screenMat, lite);
     laptop.lid.rotation.x = -14 * DEG;
     root.add(laptop.root);
@@ -208,6 +222,9 @@ export function createDevices(renderer: WebGLRenderer, chapters: HTMLElement[], 
     layout(d, pShadow, carDefs, right);
     devices.push(d);
   }
+  // Link every program now, in the background (KHR_parallel_shader_compile), instead of on the frame a
+  // chapter first shows (measured 15–40 ms GPU-sync stalls mid-scroll).
+  renderer.compileAsync(scene, camera).catch(() => undefined);
 
   /** Rest pose: phone beside the base's right edge, cars + props around; hull + overlap checks. */
   function layout(d: Device, pShadow: Mesh, carDefs: (typeof TABLES)[string]['cars'], right: number) {
@@ -506,8 +523,8 @@ export function createDevices(renderer: WebGLRenderer, chapters: HTMLElement[], 
         d.laptop.shadow.uniforms.uOpacity.value = 0.55 * (1 - dim);
         d.phoneShadow.uniforms.uOpacity.value = 0.5 * (1 - dim);
         d.table.dim(dim);
-        d.screenMat.color.setScalar(d.screenMat.map ? 1 - dim * 0.75 : 0.02);
-        d.phoneMat.color.setScalar(d.phoneMat.map ? 1 - dim * 0.75 : 0.02);
+        d.screenMat.color.setScalar(d.screenMat.map !== blank ? 1 - dim * 0.75 : 0.02);
+        d.phoneMat.color.setScalar(d.phoneMat.map !== blank ? 1 - dim * 0.75 : 0.02);
         devices.forEach((o) => (o.root.visible = o === d));
         renderer.setScissor(0, H - bottom, W, bottom - top);
         renderer.setScissorTest(true);
@@ -519,6 +536,7 @@ export function createDevices(renderer: WebGLRenderer, chapters: HTMLElement[], 
       return true;
     },
     dispose() {
+      disposed = true;
       devices.forEach((d) => {
         kit.disposeLaptop(d.laptop);
         d.table.dispose();
@@ -528,7 +546,11 @@ export function createDevices(renderer: WebGLRenderer, chapters: HTMLElement[], 
       props.dispose();
       shadowGeo.dispose();
       mats.dispose();
-      textures.forEach((t) => t.dispose());
+      blank.dispose();
+      textures.forEach((t) => {
+        t.dispose();
+        (t.image as ImageBitmap).close();
+      });
     },
   };
 }

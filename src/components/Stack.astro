@@ -262,6 +262,34 @@ const pad = (n: number) => String(n).padStart(2, '0');
     }
   }
 
+  /* Short desktop windows (1366×768 laptops ≈ 620–650 px of viewport): a tighter title and list, so the
+     active layer's details stay clear of the note at the bottom. */
+  @media (prefers-reduced-motion: no-preference) and (min-width: 1024px) and (min-height: 560px) and (max-height: 799px) {
+    :global(html.motion:not(.boot-fail)) .stk-title {
+      margin-top: 16px;
+      font-size: min(var(--t-h2), 7.5vh);
+    }
+
+    :global(html.motion:not(.boot-fail)) .stk-list {
+      margin-top: 18px;
+    }
+
+    :global(html.motion:not(.boot-fail)) .stk-item {
+      padding: 6px 0;
+    }
+
+    :global(html.motion:not(.boot-fail)) .stk-note {
+      bottom: 16px;
+    }
+  }
+
+  /* Under 600 px the details can run to three lines in the narrower column: the note gives way to them. */
+  @media (prefers-reduced-motion: no-preference) and (min-width: 1024px) and (min-height: 560px) and (max-height: 599px) {
+    :global(html.motion:not(.boot-fail)) .stk-note {
+      display: none;
+    }
+  }
+
   @media (max-width: 1023px) {
     .stk-stage {
       grid-template-columns: 1fr;

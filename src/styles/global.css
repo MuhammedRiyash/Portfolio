@@ -428,11 +428,15 @@ main {
   z-index: 1;
 }
 
+/* Sized to the large viewport, not `inset: 0`: a fixed box with height 100% follows the mobile URL bar as it
+   shows/hides, which resized the drawing buffer and re-framed the 3D mid-scroll (gl-scene ResizeObserver). */
 .gl {
   position: fixed;
-  inset: 0;
+  top: 0;
+  left: 0;
   width: 100%;
-  height: 100%;
+  height: 100vh;
+  height: 100lvh;
   z-index: 0;
   pointer-events: none;
   visibility: hidden;
