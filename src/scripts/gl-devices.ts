@@ -473,10 +473,14 @@ export function createDevices(renderer: WebGLRenderer, chapters: HTMLElement[], 
       devices.forEach((d, i) => {
         if (d.loaded || rects[i].top > H * 2 || rects[i].bottom < -H) return;
         d.loaded = true;
-        load(d.media.dataset.texDesktop, d.screenMat, SCREEN_ASPECT);
+        // a media column ≤ 720 device px wide (phones) gets the half-size captures: a quarter of the decode,
+        // upload and GPU memory, no visible loss at that size
+        const small = d.media.clientWidth * renderer.getPixelRatio() <= 720;
+        const { texDesktop, texDesktopSm, texPhone, texPhoneSm } = d.media.dataset;
+        load(small ? texDesktopSm : texDesktop, d.screenMat, SCREEN_ASPECT);
         const ph = d.phone.userData as { h: number; w: number };
         const b = ph.h * 0.022;
-        load(d.media.dataset.texPhone, d.phoneMat, (ph.h - b * 2) / (ph.w - b * 2));
+        load(small ? texPhoneSm : texPhone, d.phoneMat, (ph.h - b * 2) / (ph.w - b * 2));
       });
       const visible = rects.map((r) => r.top < H && r.bottom > 0);
       // cars that zoomed off come back once their chapter has left the screen

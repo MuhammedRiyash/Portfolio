@@ -81,8 +81,15 @@ const screens: Record<string, Screens> = {
     phoneAlt: 'Illustrative AI content repurposing app on a phone with sample data',
   },
 };
+/* 3D screen textures: full size, plus half size for small screens (phone lite tables), where the laptop is
+   ≈ 450 device px wide and the full pair would cost ~10 MB of GPU memory per chapter. */
 const texture = Object.fromEntries(
-  await Promise.all(Object.entries(screens).map(async ([id, s]) => [id, { desktop: await tex(s.desktop, 1440), phone: await tex(s.mobile, 780) }])),
+  await Promise.all(
+    Object.entries(screens).map(async ([id, s]) => [
+      id,
+      { desktop: await tex(s.desktop, 1440), desktopSm: await tex(s.desktop, 720), phone: await tex(s.mobile, 780), phoneSm: await tex(s.mobile, 390) },
+    ]),
+  ),
 );
 ---
 
@@ -181,7 +188,9 @@ const texture = Object.fromEntries(
             class:list={['ch-media', { 'ch-media--plinth': c.id === 'doc2home' }]}
             data-ch-media
             data-tex-desktop={texture[c.id].desktop}
+            data-tex-desktop-sm={texture[c.id].desktopSm}
             data-tex-phone={texture[c.id].phone}
+            data-tex-phone-sm={texture[c.id].phoneSm}
           >
             {c.id === 'doc2home' && (
               <DayStill name="plinth" class="ch-plinth" sizes="(max-width: 1023px) 92vw, 52vw" alt={`${screens[c.id].alt}, on a laptop and a phone`} />
