@@ -22,7 +22,7 @@ export function openLeadPopup({ lenis, trigger }: Options) {
   dialog.innerHTML = `
     <div class="lp-card">
       <button class="lp-x" type="button" data-lp-close><span aria-hidden="true">✕</span><span class="sr-only">Close</span></button>
-      <p class="lp-k mono"><span class="dot" aria-hidden="true"></span>Open to senior full-stack roles</p>
+      <p class="lp-k mono"><span class="dot" aria-hidden="true"></span>Open to full-stack roles</p>
       <h2 id="lp-title" class="lp-title display">Hiring for a full-stack <em>role?</em></h2>
       <p id="lp-desc" class="lp-sub">Share the role and how to reach you — I’ll reply from ${person.email}.</p>
       <form class="lp-form" action="${person.formspree}" method="POST" novalidate>

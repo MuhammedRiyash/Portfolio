@@ -7,7 +7,7 @@
 export const person = {
   name: 'Muhammed Riyash J',
   shortName: 'Riyash',
-  title: 'Senior Full-Stack Developer',
+  title: 'Full-Stack Developer',
   location: 'Bengaluru, India',
   email: 'thisismd.riyash@gmail.com',
   phone: '+91 70948 36267',
@@ -22,11 +22,11 @@ export const person = {
 } as const;
 
 export const summary =
-  'Senior full-stack developer with 3+ years building headless storefronts, Laravel commerce back ends and WooCommerce stores, with 20+ sites shipped to production. Works across Astro, React, Next.js, TypeScript and PHP/Laravel, tests builds end-to-end against the live store, and recently shipped an AI content SaaS on the Claude and GPT APIs.';
+  'Full-stack developer with 3+ years building headless storefronts, Laravel commerce back ends and WooCommerce stores, with 20+ sites shipped to production. Works across Astro, React, Next.js, TypeScript and PHP/Laravel. AI-native: builds with Claude Code, MCP and AI agent workflows, and builds LLM features on the Claude and OpenAI APIs.';
 
 export const bio = [
-  'I’m a senior full-stack developer in Bengaluru building headless commerce: an Astro and Preact storefront for Young Onion, the multi-store Laravel platform behind it, and fast Astro marketing sites.',
-  'Since September 2023 the stack has kept widening: 12+ WordPress and Shopify sites, then in 2026 full-stack builds — 360 Home Healthcare, Fiomis, Inventra and an AI content SaaS. I test against the live site with Playwright, and I care about Core Web Vitals and accessibility as much as the feature list.',
+  'I’m a full-stack developer in Bengaluru building headless commerce: an Astro and Preact storefront for Young Onion, the multi-store Laravel platform behind it, and fast Astro marketing sites.',
+  'Since September 2023 the stack has kept widening: 12+ WordPress and Shopify sites as a freelancer, then in 2026 independent full-stack builds — 360 Home Healthcare, Fiomis, Inventra and an AI content SaaS. I work AI-native with Claude Code, MCP and agent workflows, test against the live site with Playwright, and care about Core Web Vitals and accessibility as much as the feature list.',
 ];
 
 export type Chapter = {
@@ -195,7 +195,7 @@ export type Role = {
 export const experience: Role[] = [
   {
     company: 'Zethic Technologies LLP',
-    role: 'Senior Full-Stack Developer',
+    role: 'Full-Stack Developer',
     period: 'Feb 2026 – Present',
     place: 'Bengaluru, India',
     bullets: [
@@ -213,10 +213,9 @@ export const experience: Role[] = [
   {
     company: 'Freelance',
     role: 'Full-Stack, WordPress and Shopify Developer',
-    period: 'Sep 2023 – Present',
+    period: 'Sep 2023 – Dec 2025',
     place: 'Remote',
     bullets: [
-      '2026 client projects: 360 Home Healthcare (Doc2Home), a live Next.js home-healthcare platform at 360homehealthcare.in; Fiomis, a headless clothing store on Astro and Medusa v2; Inventra, a Next.js 16 inventory dashboard; and an AI content-repurposing SaaS on the Claude and GPT APIs.',
       'Delivered 12+ WordPress and Shopify websites for SMEs and startups, lifting organic traffic by 25% on average.',
       'Built 3 custom plugins: a lead-management dashboard with forms, filters, CSV export and user roles; a WooCommerce order-tracking system with notifications; and a WooCommerce referral engine with points and analytics.',
       'Optimized 3 Shopify stores with Liquid, JavaScript and metafields, adding sticky CTAs, bundles and upsells that raised conversion by about 10% and average order value by 12%, with PageSpeed scores of 85+ on mobile and desktop.',
@@ -238,7 +237,7 @@ export const timeline = [
   {
     period: 'Feb 2026 — Now',
     company: 'Zethic Technologies',
-    role: 'Senior Full-Stack Developer · Bengaluru',
+    role: 'Full-Stack Developer · Bengaluru',
     lines: [
       'The new Young Onion storefront in Astro SSR + Preact — product pages, cart, checkout, accounts and SEO schema.',
       'ZetStore (Laravel 13): GSTR-1 reports, GST-aware coupons and shipping, a back-in-stock waitlist and server-side inventory checks.',
@@ -246,11 +245,11 @@ export const timeline = [
     ],
   },
   {
-    period: 'Sep 2023 — Now',
+    period: 'Sep 2023 — Dec 2025',
     company: 'Freelance',
     role: 'Full-Stack, WordPress and Shopify Developer · Remote',
     lines: [
-      '2026 client builds: 360 Home Healthcare (live), Fiomis, Inventra and an AI content SaaS.',
+      'Client work for SMEs and startups: KOMAKI, SGR777 Foods, TAABI AI, Eleenova, Botticelli and more.',
       'WordPress and Shopify sites for SMEs and startups, with technical SEO built in.',
       'Custom plugins: lead management, WooCommerce order tracking and WooCommerce referrals.',
       'Shopify store optimisation with Liquid and metafields: sticky CTAs, bundles and upsells.',
@@ -267,7 +266,8 @@ export const timeline = [
 export const skills: { group: string; items: string[] }[] = [
   { group: 'Languages', items: ['JavaScript (ES6+)', 'TypeScript', 'PHP', 'HTML5', 'CSS3', 'SQL', 'Python (scripting)'] },
   { group: 'Frontend', items: ['React', 'Preact', 'Astro (SSR/SSG)', 'Next.js', 'Tailwind CSS', 'Vite', 'Material UI', 'Redux Toolkit', 'Responsive Design'] },
-  { group: 'Backend and Data', items: ['Laravel', 'Node.js', 'REST APIs', 'Medusa v2', 'Prisma', 'MySQL', 'PostgreSQL', 'LLM APIs (Claude, OpenAI GPT)'] },
+  { group: 'Backend and Data', items: ['Laravel', 'Node.js', 'REST APIs', 'Medusa v2', 'Prisma', 'MySQL', 'PostgreSQL'] },
+  { group: 'AI and Agents', items: ['Claude Code', 'Google Antigravity', 'Model Context Protocol (MCP)', 'AI Agents', 'Agent Skills (CLAUDE.md, AGENTS.md)', 'Claude API', 'OpenAI API', 'Prompt Engineering'] },
   { group: 'WordPress and E-commerce', items: ['WordPress (plugins, themes)', 'WooCommerce (REST API, WP-CLI)', 'Shopify (Liquid)', 'Elementor'] },
   { group: 'Testing and Performance', items: ['Playwright', 'Vitest', 'PHPUnit', 'axe-core', 'Lighthouse', 'Core Web Vitals', 'Cross-Browser QA'] },
   { group: 'SEO and Tools', items: ['Technical SEO', 'Google Tag Manager', 'GA4', 'OneTrust', 'Git', 'Cloudflare', 'Docker', 'Coolify', 'Jira', 'Agile/Scrum'] },
@@ -328,10 +328,10 @@ export const education = [
 
 export const certifications = ['Java Full-Stack Development (Besant Technologies)', 'Web Development Masterclass (YouAccel)'];
 
-/** 2026 freelance client projects, as listed on /cv. */
+/** 2026 independent projects, as listed on /cv. */
 export const projectsCv = [
-  { name: '360 Home Healthcare (Doc2Home)', year: '2026', href: 'https://360homehealthcare.in/', text: 'Client project, live: home-healthcare platform on Next.js and Prisma/PostgreSQL — patient booking, provider onboarding, admin analytics. Case study: github.com/MuhammedRiyash/doc2home-showcase.' },
-  { name: 'Fiomis — Headless Clothing Store', year: '2026', href: 'https://github.com/MuhammedRiyash/fiomis-showcase', text: 'Client project: Astro storefront (SSR/SSG, islands) on a Medusa v2 back end in a TypeScript monorepo; in development.' },
-  { name: 'Inventra — Inventory Dashboard', year: '2026', href: 'https://github.com/MuhammedRiyash/inventra-showcase', text: 'Client project: Next.js 16 / TypeScript inventory dashboard for retailers — vendors, purchase orders, warehouses, JIT stock, billing, 15+ KPIs.' },
-  { name: 'AI Content Repurposing SaaS', year: '2026', text: 'Client project, unreleased: one-click micro-SaaS that turns blog posts and videos into X threads and LinkedIn carousels; Next.js, Claude and GPT APIs.' },
+  { name: '360 Home Healthcare (Doc2Home)', year: '2026', href: 'https://360homehealthcare.in/', text: 'Live: home-healthcare platform on Next.js and Prisma/PostgreSQL — patient booking, provider onboarding, admin analytics. Case study: github.com/MuhammedRiyash/doc2home-showcase.' },
+  { name: 'Fiomis — Headless Clothing Store', year: '2026', href: 'https://github.com/MuhammedRiyash/fiomis-showcase', text: 'Astro storefront (SSR/SSG, islands) on a Medusa v2 back end in a TypeScript monorepo; in development.' },
+  { name: 'Inventra — Inventory Dashboard', year: '2026', href: 'https://github.com/MuhammedRiyash/inventra-showcase', text: 'Next.js 16 / TypeScript inventory dashboard for retailers — vendors, purchase orders, warehouses, JIT stock, billing, 15+ KPIs.' },
+  { name: 'AI Content Repurposing SaaS', year: '2026', text: 'In progress: one-click micro-SaaS that turns blog posts and videos into X threads and LinkedIn carousels; Next.js, Claude and GPT APIs.' },
 ];

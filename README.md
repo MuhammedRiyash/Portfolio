@@ -1,6 +1,6 @@
 # Muhammed Riyash J — Portfolio
 
-Cinematic portfolio of Muhammed Riyash J, Senior Full-Stack Developer in Bengaluru, India.
+Cinematic portfolio of Muhammed Riyash J, Full-Stack Developer in Bengaluru, India.
 Live at **https://md-riyash-portfolio.vercel.app/** · printable CV at [`/cv`](https://md-riyash-portfolio.vercel.app/cv/).
 
 Built with Astro (static), TypeScript, GSAP + ScrollTrigger, Lenis and a lazily loaded, procedural three.js hero.

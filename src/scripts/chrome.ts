@@ -79,7 +79,7 @@ export function initChrome({ lenis, motion }: { lenis: Lenis | null; motion: boo
   const day = getDayClock();
   new ResizeObserver(() => day.refresh()).observe(document.body);
   let dayLabel = '';
-  const messages = [() => `Bengaluru — ${dayLabel}`, () => 'Open to senior full-stack roles', () => 'Now — headless commerce, Astro + Laravel'];
+  const messages = [() => `Bengaluru — ${dayLabel}`, () => 'Open to full-stack roles', () => 'Now — headless commerce, Astro + Laravel'];
   let msg = 0;
   let current = ticker?.querySelector<HTMLElement>('.ticker-item') ?? null;
   const paintDay = () => {
